@@ -1,0 +1,57 @@
+version: '3'
+services:
+  client:
+    container_name: mockly-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src:/src
+      - ./public:/public
+  api:
+    container_name: mockly-api
+    build:
+      context: ./server/api
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    volumes:
+      - ./src:/src
+  feedback-service:
+    container_name: mockly-feedback-service
+    build:
+      context: ./server/feedback-service
+      dockerfile: Dockerfile
+    ports:
+      - 3002:3002
+    volumes:
+       - ./src:/src
+  matching-service:
+    container_name: mockly-matching-service
+    build:
+      context: ./server/matching-service
+      dockerfile: Dockerfile
+    ports:
+      - 3003:3003
+    volumes:
+      - ./src:/src
+  payment-service:
+    container_name: mockly-payment-service
+    build:
+      context: ./server/payment-service
+      dockerfile: Dockerfile
+    ports:
+      - 3004:3004
+    volumes:
+      - ./src:/src
+  profile-service:
+    container_name: mockly-profile-service
+    build:
+      context: ./server/profile-service
+      dockerfile: Dockerfile
+    ports:
+      - 3005:3005
+    volumes:
+      - ./src:/src
