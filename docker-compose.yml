@@ -1,5 +1,22 @@
-version: '3'
+version: '3.1'
 services:
+  mockly-mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+  mockly-mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
   client:
     container_name: mockly-client
     build:
@@ -8,8 +25,8 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./src:/src
-      - ./public:/public
+      - ./client/src:/app/src
+      - ./client/public:/app/public
   api:
     container_name: mockly-api
     build:
@@ -18,7 +35,7 @@ services:
     ports:
       - 3001:3001
     volumes:
-      - ./src:/src
+      - ./server/api/src:/app/src
   feedback-service:
     container_name: mockly-feedback-service
     build:
@@ -27,7 +44,7 @@ services:
     ports:
       - 3002:3002
     volumes:
-       - ./src:/src
+       - ./server/feedback-service/src:/app/src
   matching-service:
     container_name: mockly-matching-service
     build:
@@ -36,7 +53,7 @@ services:
     ports:
       - 3003:3003
     volumes:
-      - ./src:/src
+      - ./server/matching-service/src:/app/src
   payment-service:
     container_name: mockly-payment-service
     build:
@@ -45,7 +62,7 @@ services:
     ports:
       - 3004:3004
     volumes:
-      - ./src:/src
+      - ./server/payment-service/src:/app/src
   profile-service:
     container_name: mockly-profile-service
     build:
@@ -54,4 +71,4 @@ services:
     ports:
       - 3005:3005
     volumes:
-      - ./src:/src
+      - ./server/profile-service/src:/app/src
