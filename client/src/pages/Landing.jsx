@@ -1,9 +1,21 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Card, Row, Form, Space, Typography, Input, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
+import { useEffect } from 'react'
+import request from '../utils/request'
 
 const Landing = () => {
   const [form] = useForm()
+
+  useEffect(() => {
+    const login = async () => {
+      request('login', {
+        method: 'POST',
+        body: JSON.stringify({ username: 'vishaal', password: 'password' })
+      }).then(console.log)
+    }
+    login()
+  }, [])
 
 
   const handleLogin = async (e) => {

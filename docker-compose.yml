@@ -25,6 +25,8 @@ services:
     volumes:
       - ./client/src:/app/src
       - ./client/public:/app/public
+    stdin_open: true
+    tty: true
   api:
     container_name: mockly-api
     build:
