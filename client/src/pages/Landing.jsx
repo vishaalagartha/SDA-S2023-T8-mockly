@@ -1,25 +1,24 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Card, Row, Form, Space, Typography, Input, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import request from '../utils/request'
 
 const Landing = () => {
   const [form] = useForm()
-
-  useEffect(() => {
-    const login = async () => {
-      request('login', {
-        method: 'POST',
-        body: JSON.stringify({ username: 'vishaal', password: 'password' })
-      }).then(console.log)
-    }
-    login()
-  }, [])
+  const navigate = useNavigate()
 
 
-  const handleLogin = async (e) => {
-    console.log(e)
+
+
+  const handleLogin = async () => {
+    const res = await request('login', {
+      method: 'POST',
+      body: JSON.stringify({ username: 'vishaal', password: 'password' })
+    })
+    const { token } = res
+    localStorage.setItem('token', token)
+    navigate('/')
   }
 
   const handleRegister = async (e) => {

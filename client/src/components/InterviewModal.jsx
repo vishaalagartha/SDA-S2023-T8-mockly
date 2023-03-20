@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import dayjs from 'dayjs'
 import { Modal, Row, Form, Radio, Tag, Typography, Select, Steps, Divider, Button, message, DatePicker } from "antd"
 import { useForm } from "antd/es/form/Form"
-import { LeftOutlined, RightOutlined } from "@ant-design/icons"
+import { LeftCircleTwoTone, RightCircleTwoTone } from "@ant-design/icons"
 import { createInterview } from "../api/interview"
 
 const InterviewModal = ({ open, setOpen }) => {
@@ -16,18 +16,9 @@ const InterviewModal = ({ open, setOpen }) => {
 
   useEffect(() => {
     form.resetFields()
+    setTimes([])
     setStep(0)
   }, [open])
-
-  const leftStyle = {
-    fontSize: 16,
-    color: step > 0 ? '#1677FF' : '#F5F5F5'
-  }
-
-  const rightStyle = {
-    fontSize: 16,
-    color: step < steps.length - 1 ? '#1677FF' : '#F5F5F5'
-  }
 
   const handleStepBack = () => {
     step > 0 && setStep(step - 1)
@@ -43,14 +34,12 @@ const InterviewModal = ({ open, setOpen }) => {
       if (!times.length) {
         throw new Error('Please select at least 1 time slot.')   
       }   
-      console.log('here')
       const formattedTimes = times.map(t => dayjs(t, 'MM/DD/YY h A').unix())
       const data = { ...form.getFieldsValue(), dates: formattedTimes }
       const res = await createInterview(data)
-      if (res.status === 200)
-        console.log(res.data)
+      console.log(res)
     } catch (e) {
-      messageApi.open({ type: 'error', content: 'Please fill out all the fields prior to submitting!' })
+      messageApi.open({ type: 'error', content: 'Failed to request interview.' })
     }
   }
 
@@ -82,8 +71,8 @@ const InterviewModal = ({ open, setOpen }) => {
           current={step}
           items={steps}/>
           <Row justify="center" className="m-5">
-            <LeftOutlined role="button" style={leftStyle} onClick={handleStepBack} />
-            <RightOutlined role="button" style={rightStyle} onClick={handleStepForward} />
+            <LeftCircleTwoTone className="m-3" role="button" style={{ fontSize: 36 }} twoToneColor={step === 0 ? "#f5f5f5" : ''} onClick={handleStepBack} />
+            <RightCircleTwoTone className="m-3" role="button" style={{ fontSize: 36 }} twoToneColor={step === steps.length - 1 ? "#f5f5f5" : ''} onClick={handleStepForward} />
           </Row>
           <Row justify="center" className="m-5">
             <Button type="primary" onClick={handleSubmit}>Submit</Button>
