@@ -5,21 +5,9 @@ class MatchController {
   /*
   * Create a match between a interviewer and interviewee
   */
-  create(interviewer, interviewee) {
-    return new MatchSchema({ interviewer, interviewee })
+  create(interviewer, interviewee, preferences, time) {
+    return new MatchSchema({ interviewer, interviewee, preferences, time })
   }
-
-  /*
-  *
-  */
-  time(time) {
-    MatchSchema.set({ time })
-    return 
-  }
-
-  /*
-  *
-  */
 
   /*
   * Find all potential matches given preferences and schedule

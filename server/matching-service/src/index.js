@@ -12,7 +12,7 @@ app.post('/interviews', (req, res) => {
   res.json({ message: 'POST interviews response' })
 })
 
-app.delete('/interview', (req, res) => {
+app.delete('/interviews', (req, res) => {
   res.json({ message: 'DELETE interviews response' })
 })
 

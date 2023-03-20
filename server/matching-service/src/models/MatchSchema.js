@@ -11,9 +11,8 @@ const MatchSchema = new Schema({
     required: true,
     type: String
   },
-  timestamp: Number,
-  field: String,
-  difficulty: String,
+  time: Number,
+  preferences: Object
 })
 
 export { MatchSchema }
