@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addSkill, removeSkill } from '../../store/userSlice'
+import { selectSkills } from '../../store/userSelector'
 import { Card, Tag, Input, Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 const SkillsCard = () => {
-  const [skills, setSkills] = useState([])
+  const dispatch = useDispatch()
+
+  const skills = useSelector(selectSkills)
   const [newSkill, setNewSkill] = useState('')
 
   const handleNewSkillChange = (event) => {
@@ -12,13 +17,18 @@ const SkillsCard = () => {
 
   const handleAddSkillClick = () => {
     if (newSkill !== '') {
-      setSkills([...skills, newSkill])
+      // TODO: use uuid instead
+      const newSkillObj = {
+        id: Math.floor(Math.random() * 1001),
+        text: newSkill,
+      }
+      dispatch(addSkill(newSkillObj))
       setNewSkill('')
     }
   }
 
   const handleRemoveSkillClick = (skillToRemove) => {
-    setSkills(skills.filter((skill) => skill !== skillToRemove))
+    dispatch(removeSkill({ id: skillToRemove }))
   }
 
   const renderSkills = () => {
@@ -26,10 +36,10 @@ const SkillsCard = () => {
       <Tag
         className='user-skill-tag'
         closable
-        key={skill}
-        onClose={() => handleRemoveSkillClick(skill)}
+        key={skill.id}
+        onClose={() => handleRemoveSkillClick(skill.id)}
       >
-        {skill}
+        {skill.text}
       </Tag>
     ))
   }

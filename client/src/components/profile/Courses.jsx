@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addCourse, removeCourse } from '../../store/userSlice'
+import { selectCourses } from '../../store/userSelector'
 import { Card, Tag, Input, Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 const CoursesCard = () => {
-  const [courses, setCourses] = useState([])
+  const dispatch = useDispatch()
+
+  const courses = useSelector(selectCourses)
   const [newCourse, setNewCourse] = useState('')
 
   const handleNewCourseChange = (event) => {
@@ -12,24 +17,29 @@ const CoursesCard = () => {
 
   const handleAddCourseClick = () => {
     if (newCourse !== '') {
-      setCourses([...courses, newCourse])
+      const newCourseObj = {
+        // TODO: use uuid instead
+        id: Math.floor(Math.random() * 1001),
+        text: newCourse,
+      }
+      dispatch(addCourse(newCourseObj))
       setNewCourse('')
     }
   }
 
-  const handleRemoveCourseClick = (skillToRemove) => {
-    setCourses(courses.filter((skill) => skill !== skillToRemove))
+  const handleRemoveCourseClick = (courseToRemove) => {
+    dispatch(removeCourse({ id: courseToRemove }))
   }
 
   const renderCourses = () => {
-    return courses.map((skill) => (
+    return courses.map((course) => (
       <Tag
-        className='user-skill-tag'
+        className='user-course-tag'
         closable
-        key={skill}
-        onClose={() => handleRemoveCourseClick(skill)}
+        key={course.id}
+        onClose={() => handleRemoveCourseClick(course.id)}
       >
-        {skill}
+        {course.text}
       </Tag>
     ))
   }
@@ -37,14 +47,14 @@ const CoursesCard = () => {
   return (
     <Card className='user-profile-card' title='Courses'>
       {renderCourses()}
-      <div className='user-skill-actions-div'>
+      <div className='user-course-actions-div'>
         <Input
           value={newCourse}
           onChange={handleNewCourseChange}
-          placeholder='Add skill'
+          placeholder='Add course'
         />
         <Button
-          className='user-add-skill-btn'
+          className='user-add-course-btn'
           type='primary'
           onClick={handleAddCourseClick}
           icon={<PlusOutlined />}
