@@ -7,6 +7,9 @@ const initialState = {
   lastName: '',
   email: '',
   phoneNumber: '',
+  pronouns: '',
+  gender: '',
+  ethnicity: '',
   summary: '',
   skills: [],
   education: [],
@@ -24,6 +27,14 @@ const userSlice = createSlice({
         ...state,
         summary: action.payload,
       }
+    },
+    setPersonalInformation: (state, action) => {
+      const { email, phoneNumber, gender, ethnicity, pronouns } = action.payload
+      state.email = email
+      state.phoneNumber = phoneNumber
+      state.gender = gender
+      state.ethnicity = ethnicity
+      state.pronouns = pronouns
     },
     addSkill: (state, action) => {
       state.skills = concat(state.skills, action.payload)
@@ -60,6 +71,7 @@ const userSlice = createSlice({
 
 export const {
   setSummary,
+  setPersonalInformation,
   addSkill,
   removeSkill,
   addEducation,
