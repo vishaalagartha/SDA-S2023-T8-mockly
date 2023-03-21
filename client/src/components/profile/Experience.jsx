@@ -78,7 +78,7 @@ const ExperienceCard = () => {
               {experience.startDate} - {experience.endDate || 'Current'}
             </Paragraph>
             <Paragraph>{experience.location}</Paragraph>
-            <Paragraph style={{ marginTop: '8px' }}>
+            <Paragraph style={{ marginTop: '8px', whiteSpace: 'pre-wrap' }}>
               {experience.description}
             </Paragraph>
             <Button danger onClick={() => deleteExperienceDetails(experience)}>

@@ -86,7 +86,9 @@ const ProjectsCard = () => {
                   <Paragraph>
                     {project.startDate} - {project.endDate || 'Current'}
                   </Paragraph>
-                  <Paragraph>{project.description}</Paragraph>
+                  <Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                    {project.description}
+                  </Paragraph>
                 </>
               }
             />
