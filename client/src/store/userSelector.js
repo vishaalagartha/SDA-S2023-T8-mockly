@@ -15,3 +15,6 @@ export const getUserIdentity = createSelector(selectUser, (user) => {
 export const getUserSummary = createSelector(selectUser, (user) => {
   return { summary: user.summary }
 })
+export const getUserEducation = createSelector(selectUser, (user) => {
+  return { education: user.education }
+})

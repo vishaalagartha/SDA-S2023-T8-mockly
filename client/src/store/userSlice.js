@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { concat, reject } from 'lodash'
+import { concat, reject, remove } from 'lodash'
 
 const initialState = {
   id: '',
@@ -61,7 +61,7 @@ const userSlice = createSlice({
       state.education = concat(state.education, action.payload)
     },
     removeEducation: (state, action) => {
-      state.education = reject(state.education, { id: action.payload.id })
+      remove(state.education, action.payload)
     },
     addExperience: (state, action) => {
       state.experience = concat(state.experience, action.payload)

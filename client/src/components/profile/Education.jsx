@@ -11,53 +11,59 @@ import {
   Typography,
   List,
 } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { addEducation, removeEducation } from '../../store/userSlice'
+import { getUserEducation } from '../../store/userSelector'
+import { useDispatch, useSelector } from 'react-redux'
 
 const { Title, Paragraph } = Typography
 
 const EducationCard = () => {
+  const initialFormState = {
+    schoolName: '',
+    educationLevel: '',
+    startDate: null,
+    endDate: null,
+    major: '',
+    minor: '',
+    gpa: '',
+  }
+
   const [addEducationMode, setAddEducationMode] = useState(false)
-  const [educationList, setEducationList] = useState([
-    {
-      id: 1,
-      schoolName: 'Carnegie Mellon University',
-      educationLevel: 'Masters Degree',
-      startDate: new Date(2021, 8).toLocaleString('default', {
-        month: 'short',
-        year: 'numeric',
-      }),
-      endDate: new Date(2023, 12).toLocaleString('default', {
-        month: 'short',
-        year: 'numeric',
-      }),
-      major: 'Computer Science',
-      minor: 'Business',
-      gpa: '3.8',
-    },
-  ])
+
+  const dispatch = useDispatch()
+  const userEducationList = useSelector(getUserEducation)
+
+  const [formData, setFormData] = useState({ ...initialFormState })
 
   const handleAddEducationClick = () => {
-    setAddEducationMode(true)
+    setFormData(initialFormState)
+    setAddEducationMode((prevAddMode) => !prevAddMode)
   }
 
-  const handleSaveEducationClick = (values) => {
-    setEducationList([...educationList, values])
+  const handleAddNewEducation = () => {
+    dispatch(addEducation(formData))
     setAddEducationMode(false)
   }
 
-  const handleCancelEducationClick = () => {
+  const handleCancelAddEducationClick = () => {
+    setFormData(initialFormState)
     setAddEducationMode(false)
+  }
+
+  const deleteEducationDetails = (educationObj) => {
+    dispatch(removeEducation(educationObj))
   }
 
   const renderEducationList = () => {
-    if (educationList.length === 0) {
+    if (userEducationList.education.length === 0) {
       return <Paragraph>No education information available.</Paragraph>
     }
 
     return (
       <List
         itemLayout='vertical'
-        dataSource={educationList}
+        dataSource={userEducationList.education}
         renderItem={(education) => (
           <List.Item>
             <Title level={3} style={{ marginBottom: '5px' }}>
@@ -73,21 +79,55 @@ const EducationCard = () => {
               {education.major} {education.minor ? `(${education.minor})` : ''}
             </Paragraph>
             <Paragraph strong>GPA: {education.gpa}</Paragraph>
+            <Button onClick={() => deleteEducationDetails(education)}>
+              <DeleteOutlined />
+            </Button>
           </List.Item>
         )}
       />
     )
   }
 
+  const handleInputChange = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const handleSelectChange = (value, name) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }))
+  }
+
+  const handleStartDateChange = (_, dateString) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      startDate: dateString,
+    }))
+  }
+  const handleEndDateChange = (_, dateString) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      endDate: dateString,
+    }))
+  }
+
   const renderAddEducationForm = () => {
     return (
-      <Form layout='vertical' onFinish={handleSaveEducationClick}>
+      <Form layout='vertical' onFinish={handleAddNewEducation}>
         <Form.Item
           label='School Name'
           name='schoolName'
           rules={[{ required: true, message: 'Please input the school name' }]}
         >
-          <Input />
+          <Input
+            name='schoolName'
+            value={formData.schoolName}
+            onChange={handleInputChange}
+          />
         </Form.Item>
         <Row gutter={16}>
           <Col span={18}>
@@ -101,7 +141,12 @@ const EducationCard = () => {
                 },
               ]}
             >
-              <Select>
+              <Select
+                value={formData.educationLevel}
+                onChange={(value) =>
+                  handleSelectChange(value, 'educationLevel')
+                }
+              >
                 <Select.Option value='High School'>High School</Select.Option>
                 <Select.Option value='Associates Degree'>
                   Associates Degree
@@ -118,7 +163,11 @@ const EducationCard = () => {
           </Col>
           <Col span={6}>
             <Form.Item label='GPA' name='gpa'>
-              <Input />
+              <Input
+                name='gpa'
+                value={formData.gpa}
+                onChange={handleInputChange}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -131,7 +180,13 @@ const EducationCard = () => {
                 { required: true, message: 'Please select the start date' },
               ]}
             >
-              <DatePicker picker='month' style={{ width: '100%' }} />
+              <DatePicker
+                name='startDate'
+                value={formData.startDate}
+                picker='month'
+                style={{ width: '100%' }}
+                onChange={handleStartDateChange}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -142,7 +197,13 @@ const EducationCard = () => {
                 { required: true, message: 'Please select the end date' },
               ]}
             >
-              <DatePicker picker='month' style={{ width: '100%' }} />
+              <DatePicker
+                name='endDate'
+                value={formData.endDate}
+                picker='month'
+                style={{ width: '100%' }}
+                onChange={handleEndDateChange}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -153,12 +214,20 @@ const EducationCard = () => {
               name='major'
               rules={[{ required: true, message: 'Please input the major' }]}
             >
-              <Input />
+              <Input
+                name='major'
+                value={formData.major}
+                onChange={handleInputChange}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label='Minor' name='minor'>
-              <Input />
+              <Input
+                name='minor'
+                value={formData.minor}
+                onChange={handleInputChange}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -168,7 +237,7 @@ const EducationCard = () => {
               className='user-right-card--cancel-btn'
               type='default'
               shape='round'
-              onClick={handleCancelEducationClick}
+              onClick={handleCancelAddEducationClick}
             >
               Cancel
             </Button>
@@ -176,7 +245,7 @@ const EducationCard = () => {
               className='user-right-card--save-btn'
               type='primary'
               shape='round'
-              onClick={handleCancelEducationClick}
+              htmlType='submit'
             >
               Save
             </Button>
