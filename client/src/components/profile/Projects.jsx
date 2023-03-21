@@ -11,72 +11,88 @@ import {
   Typography,
   List,
 } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { LinkOutlined } from '@ant-design/icons'
+import { PlusOutlined, LinkOutlined, DeleteOutlined } from '@ant-design/icons'
+import { useSelector, useDispatch } from 'react-redux'
+import { getUserProjects } from '../../store/userSelector'
+import { addProject, removeProject } from '../../store/userSlice'
 
 const { Title, Paragraph } = Typography
 const { Item } = List
 
 const ProjectsCard = () => {
-  const [addProjectMode, setAddProjectMode] = useState(false)
-  const [projectList, setProjectList] = useState([
-    {
-      name: 'E-commerce Website',
-      url: 'https://example.com',
-      startDate: '06/2021',
-      endDate: '09/2021',
-      description:
-        'Developed an e-commerce website using React, Node.js, and MongoDB. Implemented payment gateway and shopping cart functionality.',
-    },
-  ])
-
-  const handleAddProjectClick = () => {
-    setAddProjectMode(true)
+  const initialFormState = {
+    name: '',
+    url: '',
+    startDate: null,
+    endDate: null,
+    description: '',
   }
 
-  const handleSaveProjectClick = (values) => {
-    setProjectList([...projectList, values])
+  const dispatch = useDispatch()
+
+  const [addProjectMode, setAddProjectMode] = useState(false)
+  const [formData, setFormData] = useState({ ...initialFormState })
+  const userProjectsList = useSelector(getUserProjects)
+
+  const handleAddProjectClick = () => {
+    setFormData(initialFormState)
+    setCurrent(false)
+    setAddProjectMode((prevMode) => !prevMode)
+  }
+
+  const handleAddNewProject = () => {
+    dispatch(addProject(formData))
+    setCurrent(false)
     setAddProjectMode(false)
   }
 
   const handleCancelProjectClick = () => {
+    setFormData(initialFormState)
+    setCurrent(false)
     setAddProjectMode(false)
   }
 
+  const deleteProjectDetails = (project) => {
+    dispatch(removeProject(project))
+  }
+
   const renderProject = () => {
-    if (projectList.length === 0) {
+    if (userProjectsList.projects.length === 0) {
       return <Paragraph>No project information available.</Paragraph>
     }
 
     return (
       <List
         itemLayout='vertical'
-        dataSource={projectList}
+        dataSource={userProjectsList.projects}
         renderItem={(project, index) => (
           <Item key={index}>
             <Item.Meta
               title={
                 <Button
                   type='link'
-                  href={project.url}
+                  href={project.url || null}
                   target='_blank'
                   rel='noopener noreferrer'
                   style={{ paddingLeft: 0 }}
                 >
                   <Title level={3} style={{ marginBottom: '5px' }}>
-                    {project.name} <LinkOutlined />
+                    {project.name} {project.url && <LinkOutlined />}
                   </Title>
                 </Button>
               }
               description={
                 <>
                   <Paragraph>
-                    {project.startDate} - {project.endDate}
+                    {project.startDate} - {project.endDate || 'Current'}
                   </Paragraph>
                   <Paragraph>{project.description}</Paragraph>
                 </>
               }
             />
+            <Button danger onClick={() => deleteProjectDetails(project)}>
+              <DeleteOutlined />
+            </Button>
           </Item>
         )}
       />
@@ -86,27 +102,63 @@ const ProjectsCard = () => {
   const [current, setCurrent] = useState(false)
 
   const handleCurrentChange = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      endDate: null,
+    }))
     setCurrent(e.target.checked)
+  }
+
+  const handleInputChange = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const handleStartDateChange = (_, dateString) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      startDate: dateString,
+    }))
+  }
+  const handleEndDateChange = (_, dateString) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      endDate: dateString,
+    }))
   }
 
   const renderAddProjectForm = () => {
     return (
-      <Form layout='vertical'>
+      <Form layout='vertical' onFinish={handleAddNewProject}>
         <Form.Item
           label='Name'
           name='name'
           rules={[
             { required: true, message: 'Please enter the name of the project' },
           ]}
+          hasFeedback
         >
-          <Input placeholder='Project Name' />
+          <Input
+            name='name'
+            placeholder='Project Name'
+            value={formData.name}
+            onChange={handleInputChange}
+          />
         </Form.Item>
         <Form.Item
           label='URL'
           name='url'
           rules={[{ type: 'url', message: 'Please enter a valid URL' }]}
+          hasFeedback
         >
-          <Input placeholder='Project URL' />
+          <Input
+            name='url'
+            placeholder='Project URL'
+            value={formData.url}
+            onChange={handleInputChange}
+          />
         </Form.Item>
         <Row gutter={16}>
           <Col span={10}>
@@ -117,7 +169,13 @@ const ProjectsCard = () => {
                 { required: true, message: 'Please select the start date' },
               ]}
             >
-              <DatePicker picker='month' style={{ width: '100%' }} />
+              <DatePicker
+                name='startDate'
+                value={formData.startDate}
+                onChange={handleStartDateChange}
+                picker='month'
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Col>
           <Col span={10}>
@@ -132,6 +190,9 @@ const ProjectsCard = () => {
               ]}
             >
               <DatePicker
+                name='endDate'
+                value={formData.endDate}
+                onChange={handleEndDateChange}
                 picker='month'
                 style={{ width: '100%' }}
                 disabled={current}
@@ -145,7 +206,13 @@ const ProjectsCard = () => {
           </Col>
         </Row>
         <Form.Item label='Description' name='description'>
-          <Input.TextArea rows={4} placeholder='Project Description' />
+          <Input.TextArea
+            name='description'
+            value={formData.description}
+            onChange={handleInputChange}
+            rows={4}
+            placeholder='Project Description'
+          />
         </Form.Item>
         <div className='user-right-card--button-container'>
           <Button
@@ -160,7 +227,7 @@ const ProjectsCard = () => {
             className='user-right-card--save-btn'
             type='primary'
             shape='round'
-            onClick={handleSaveProjectClick}
+            htmlType='submit'
           >
             Save
           </Button>

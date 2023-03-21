@@ -21,3 +21,6 @@ export const getUserEducation = createSelector(selectUser, (user) => {
 export const getUserExperience = createSelector(selectUser, (user) => {
   return { experience: user.experience }
 })
+export const getUserProjects = createSelector(selectUser, (user) => {
+  return { projects: user.projects }
+})
