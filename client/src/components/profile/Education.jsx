@@ -79,7 +79,7 @@ const EducationCard = () => {
               {education.major} {education.minor ? `(${education.minor})` : ''}
             </Paragraph>
             <Paragraph strong>GPA: {education.gpa}</Paragraph>
-            <Button onClick={() => deleteEducationDetails(education)}>
+            <Button danger onClick={() => deleteEducationDetails(education)}>
               <DeleteOutlined />
             </Button>
           </List.Item>

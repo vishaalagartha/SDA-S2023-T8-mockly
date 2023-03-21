@@ -11,47 +11,61 @@ import {
   Typography,
   List,
 } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { useSelector, useDispatch } from 'react-redux'
+import { getUserExperience } from '../../store/userSelector'
+import { addExperience, removeExperience } from '../../store/userSlice'
 
 const { Title, Paragraph } = Typography
 const { Item } = List
 
 const ExperienceCard = () => {
-  const [addExperienceMode, setAddExperienceMode] = useState(false)
-  const [experienceList, setExperienceList] = useState([
-    {
-      companyName: 'ABC Corporation',
-      position: 'Software Engineer',
-      startDate: '01/2020',
-      endDate: 'present',
-      location: 'San Francisco, CA',
-      description:
-        "Develop and maintain the company's core web application using React and Node.js",
-    },
-  ])
-
-  const handleAddExperienceClick = () => {
-    setAddExperienceMode(true)
+  const initialFormState = {
+    companyName: '',
+    position: '',
+    startDate: null,
+    endDate: null,
+    location: '',
+    description: '',
   }
 
-  const handleSaveExperienceClick = (values) => {
-    setExperienceList([...experienceList, values])
+  const dispatch = useDispatch()
+  const userExperienceList = useSelector(getUserExperience)
+
+  const [addExperienceMode, setAddExperienceMode] = useState(false)
+  const [formData, setFormData] = useState({ ...initialFormState })
+
+  const handleAddExperienceClick = () => {
+    setFormData(initialFormState)
+    setCurrent(false)
+    setAddExperienceMode((prevMode) => !prevMode)
+  }
+
+  const handleSaveExperienceClick = () => {
+    dispatch(addExperience(formData))
+    setCurrent(false)
     setAddExperienceMode(false)
   }
 
   const handleCancelExperienceClick = () => {
+    setFormData(initialFormState)
+    setCurrent(false)
     setAddExperienceMode(false)
   }
 
+  const deleteExperienceDetails = (experience) => {
+    dispatch(removeExperience(experience))
+  }
+
   const renderExperienceList = () => {
-    if (experienceList.length === 0) {
+    if (userExperienceList.experience.length === 0) {
       return <p>No work experience available.</p>
     }
 
     return (
       <List
         itemLayout='vertical'
-        dataSource={experienceList}
+        dataSource={userExperienceList.experience}
         renderItem={(experience, index) => (
           <Item key={index}>
             <Title level={3} style={{ marginBottom: '5px' }}>
@@ -61,12 +75,15 @@ const ExperienceCard = () => {
               {experience.position}
             </Title>
             <Paragraph>
-              {experience.startDate} - {experience.endDate}
+              {experience.startDate} - {experience.endDate || 'Current'}
             </Paragraph>
             <Paragraph>{experience.location}</Paragraph>
             <Paragraph style={{ marginTop: '8px' }}>
               {experience.description}
             </Paragraph>
+            <Button danger onClick={() => deleteExperienceDetails(experience)}>
+              <DeleteOutlined />
+            </Button>
           </Item>
         )}
       />
@@ -79,6 +96,27 @@ const ExperienceCard = () => {
     setCurrent(e.target.checked)
   }
 
+  const handleStartDateChange = (_, dateString) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      startDate: dateString,
+    }))
+  }
+
+  const handleEndDateChange = (_, dateString) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      endDate: dateString,
+    }))
+  }
+
+  const handleInputChange = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
   const renderAddExperienceForm = () => {
     return (
       <Form layout='vertical' onFinish={handleSaveExperienceClick}>
@@ -87,7 +125,11 @@ const ExperienceCard = () => {
           name='companyName'
           rules={[{ required: true, message: 'Please input the company name' }]}
         >
-          <Input />
+          <Input
+            name='companyName'
+            value={formData.companyName}
+            onChange={handleInputChange}
+          />
         </Form.Item>
         <Form.Item
           label='Position'
@@ -105,7 +147,12 @@ const ExperienceCard = () => {
                 { required: true, message: 'Please select the start date' },
               ]}
             >
-              <DatePicker picker='month' style={{ width: '100%' }} />
+              <DatePicker
+                name='startDate'
+                picker='month'
+                style={{ width: '100%' }}
+                onChange={handleStartDateChange}
+              />
             </Form.Item>
           </Col>
           <Col span={10}>
@@ -120,9 +167,11 @@ const ExperienceCard = () => {
               ]}
             >
               <DatePicker
+                name='endDate'
                 picker='month'
                 style={{ width: '100%' }}
                 disabled={current}
+                onChange={handleEndDateChange}
               />
             </Form.Item>
           </Col>
@@ -137,14 +186,23 @@ const ExperienceCard = () => {
           name='location'
           rules={[{ required: true, message: 'Please input the location' }]}
         >
-          <Input />
+          <Input
+            name='location'
+            value={formData.location}
+            onChange={handleInputChange}
+          />
         </Form.Item>
         <Form.Item
           label='Description'
           name='description'
           rules={[{ required: true, message: 'Please input the description' }]}
         >
-          <Input.TextArea rows={4} />
+          <Input.TextArea
+            name='description'
+            value={formData.description}
+            onChange={handleInputChange}
+            rows={4}
+          />
         </Form.Item>
         <Form.Item>
           <div className='user-right-card--button-container'>

@@ -67,7 +67,7 @@ const userSlice = createSlice({
       state.experience = concat(state.experience, action.payload)
     },
     removeExperience: (state, action) => {
-      state.experience = reject(state.experience, { id: action.payload.id })
+      remove(state.experience, action.payload)
     },
     addProject: (state, action) => {
       state.projects = concat(state.projects, action.payload)

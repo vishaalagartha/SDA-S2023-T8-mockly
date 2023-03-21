@@ -9,8 +9,15 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route
+          path='/'
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='/profile' element={<ProfilePage />} />
         <Route path='/login' element={<LandingPage />} />
       </Routes>
     </Router>
