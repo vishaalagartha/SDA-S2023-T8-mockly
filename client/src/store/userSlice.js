@@ -37,7 +37,7 @@ const userSlice = createSlice({
     setSummary: (state, action) => {
       return {
         ...state,
-        summary: action.payload,
+        summary: action.payload.summary,
       }
     },
     setPersonalInformation: (state, action) => {

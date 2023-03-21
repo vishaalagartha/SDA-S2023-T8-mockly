@@ -12,3 +12,6 @@ export const getUserIdentity = createSelector(selectUser, (user) => {
   const { firstName, lastName, organization, position } = user
   return { firstName, lastName, organization, position }
 })
+export const getUserSummary = createSelector(selectUser, (user) => {
+  return { summary: user.summary }
+})

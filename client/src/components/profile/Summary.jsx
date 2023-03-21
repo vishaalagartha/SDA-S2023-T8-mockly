@@ -1,32 +1,45 @@
 import React, { useState } from 'react'
 import { Card, Typography, Form, Input, Button } from 'antd'
 import { EditOutlined } from '@ant-design/icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserSummary } from '../../store/userSelector'
+import { setSummary } from '../../store/userSlice'
 
 const { Text } = Typography
 
 const SummaryCard = () => {
+  const dispatch = useDispatch()
+
   const label =
     'What are you passionate about? What are you looking for on Mockly?'
   const [editMode, setEditMode] = useState(false)
-  const [summary, setSummary] = useState(
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-  )
+
+  const userSummary = useSelector(getUserSummary)
+
+  const [formData, setFormData] = useState({
+    summary: userSummary.summary,
+  })
 
   const handleEditClick = () => {
-    setEditMode(true)
+    setFormData({ ...userSummary })
+    setEditMode((prevEditMode) => !prevEditMode)
   }
 
   const handleSaveClick = () => {
-    // Handle save logic here
+    dispatch(setSummary(formData))
     setEditMode(false)
   }
 
   const handleCancelClick = () => {
+    setFormData({ ...userSummary })
     setEditMode(false)
   }
 
   const handleSummaryChange = (e) => {
-    setSummary(e.target.value)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }))
   }
 
   return (
@@ -40,10 +53,11 @@ const SummaryCard = () => {
       }
     >
       {editMode ? (
-        <Form layout='vertical'>
-          <Form.Item label={label}>
+        <Form layout='vertical' initialValues={formData}>
+          <Form.Item name='summary' label={label}>
             <Input.TextArea
-              value={summary}
+              name='summary'
+              value={formData.summary}
               onChange={handleSummaryChange}
               autoSize={{ minRows: 4, maxRows: 8 }}
             />
@@ -71,7 +85,7 @@ const SummaryCard = () => {
         </Form>
       ) : (
         <>
-          <Text>{summary}</Text>
+          <Text>{userSummary.summary}</Text>
         </>
       )}
     </Card>
