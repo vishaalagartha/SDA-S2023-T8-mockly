@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addCourse, removeCourse } from '../../store/userSlice'
-import { selectCourses } from '../../store/userSelector'
+import { getUserCourses } from '../../store/userSelector'
 import { Card, Tag, Input, Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 const CoursesCard = () => {
   const dispatch = useDispatch()
 
-  const courses = useSelector(selectCourses)
+  const courses = useSelector(getUserCourses)
   const [newCourse, setNewCourse] = useState('')
 
   const handleNewCourseChange = (event) => {

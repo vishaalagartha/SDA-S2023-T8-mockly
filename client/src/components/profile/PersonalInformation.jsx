@@ -5,7 +5,7 @@ import { Card, Button, Form, Input, Typography, Select } from 'antd'
 import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPersonalInformation } from '../../store/userSlice'
-import { selectPersonalInformation } from '../../store/userSelector'
+import { getUserPersonalInformation } from '../../store/userSelector'
 
 const { Paragraph } = Typography
 const { Option } = Select
@@ -40,7 +40,7 @@ const PersonalInformationCard = () => {
   // value is set when click on edit icon on top-right of card.
   const [editMode, setEditMode] = useState(false)
 
-  const user = useSelector(selectPersonalInformation)
+  const user = useSelector(getUserPersonalInformation)
 
   // used to save the form's state
   const [formData, setFormData] = useState({

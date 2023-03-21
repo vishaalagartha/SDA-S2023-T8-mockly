@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addSkill, removeSkill } from '../../store/userSlice'
-import { selectSkills } from '../../store/userSelector'
+import { getUserSkills } from '../../store/userSelector'
 import { Card, Tag, Input, Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 const SkillsCard = () => {
   const dispatch = useDispatch()
 
-  const skills = useSelector(selectSkills)
+  const skills = useSelector(getUserSkills)
   const [newSkill, setNewSkill] = useState('')
 
   const handleNewSkillChange = (event) => {

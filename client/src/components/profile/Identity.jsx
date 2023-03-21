@@ -1,23 +1,56 @@
 import React, { useState } from 'react'
 import { Card, Avatar, Typography, Form, Input, Button } from 'antd'
 import { EditOutlined } from '@ant-design/icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserIdentity } from '../../store/userSelector'
+import { setIdentity } from '../../store/userSlice'
 
 const { Title } = Typography
 
 const IdentityCard = () => {
+  const dispatch = useDispatch()
+
   const [editMode, setEditMode] = useState(false)
 
+  const userIdentity = useSelector(getUserIdentity)
+
+  const [formData, setFormData] = useState({
+    firstName: userIdentity.firstName,
+    lastName: userIdentity.lastName,
+    organization: userIdentity.organization,
+    position: userIdentity.position,
+  })
+
   const handleEditClick = () => {
+    setFormData({
+      firstName: userIdentity.firstName,
+      lastName: userIdentity.lastName,
+      organization: userIdentity.organization,
+      position: userIdentity.position,
+    })
     setEditMode((prevEditMode) => !prevEditMode)
   }
 
   const handleSaveClick = () => {
-    // Handle save logic here
+    dispatch(setIdentity(formData))
     setEditMode(false)
   }
 
   const handleCancelClick = () => {
+    setFormData({
+      firstName: userIdentity.firstName,
+      lastName: userIdentity.lastName,
+      organization: userIdentity.organization,
+      position: userIdentity.position,
+    })
     setEditMode(false)
+  }
+
+  const handleInputChange = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }))
   }
 
   return (
@@ -35,15 +68,48 @@ const IdentityCard = () => {
       </div>
       {editMode ? (
         <>
-          <Form layout='vertical'>
-            <Form.Item label='Full Name'>
-              <Input />
+          <Form
+            layout='vertical'
+            onFinish={handleSaveClick}
+            initialValues={formData}
+          >
+            <Form.Item
+              name='firstName'
+              label='First Name'
+              rules={[
+                {
+                  required: true,
+                  message: 'First name is required',
+                },
+              ]}
+              hasFeedback
+            >
+              <Input
+                name='firstName'
+                value={formData.firstName}
+                onChange={handleInputChange}
+              />
             </Form.Item>
-            <Form.Item label='College/Company Name'>
-              <Input />
+            <Form.Item name='lastName' label='Last Name'>
+              <Input
+                name='lastName'
+                value={formData.lastName}
+                onChange={handleInputChange}
+              />
             </Form.Item>
-            <Form.Item label='Position/Degree Name'>
-              <Input />
+            <Form.Item name='organization' label='Organization'>
+              <Input
+                name='organization'
+                value={formData.organization}
+                onChange={handleInputChange}
+              />
+            </Form.Item>
+            <Form.Item name='position' label='Position/Degree Name'>
+              <Input
+                name='position'
+                value={formData.position}
+                onChange={handleInputChange}
+              />
             </Form.Item>
             <Form.Item>
               <div className='user-card--button-container'>
@@ -59,7 +125,7 @@ const IdentityCard = () => {
                   className='user-card--save-btn'
                   type='primary'
                   shape='round'
-                  onClick={handleSaveClick}
+                  htmlType='submit'
                 >
                   Save
                 </Button>
@@ -70,14 +136,18 @@ const IdentityCard = () => {
       ) : (
         <>
           <Title level={2} className='user-identity--fullname'>
-            Full Name
+            {`${userIdentity.firstName}  ${userIdentity.lastName}`}
           </Title>
-          <Title level={4} className='user-identity--organization'>
-            College/Company Name
-          </Title>
-          <Title level={4} className='user-identity--position'>
-            Position/Degree Name
-          </Title>
+          {userIdentity.organization && (
+            <Title level={4} className='user-identity--organization'>
+              {userIdentity.organization}
+            </Title>
+          )}
+          {userIdentity.position && (
+            <Title level={4} className='user-identity--position'>
+              {userIdentity.position}
+            </Title>
+          )}
         </>
       )}
     </Card>
