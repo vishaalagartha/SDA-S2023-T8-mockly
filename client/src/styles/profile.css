@@ -56,9 +56,17 @@
 .user-add-course-btn {
   margin-left: 5px;
 }
+
+/* TODO: Combine user-skill-tag and user-course-tag */
 .user-skill-tag {
   padding: 5px;
+  max-width: 100%;
+  white-space: normal;
+  word-wrap: break-word;
 }
 .user-course-tag {
   padding: 5px;
+  max-width: 100%;
+  white-space: normal;
+  word-wrap: break-word;
 }
