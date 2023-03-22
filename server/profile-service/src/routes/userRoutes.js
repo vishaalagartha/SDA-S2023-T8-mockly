@@ -54,7 +54,4 @@ export default Router().get('/', async (req, res) => {
     },
   ]
   res.json(usersData)
-  /**
-   * TODO: forward this request to get all users to http://localhost:3005/users
-   */
 })

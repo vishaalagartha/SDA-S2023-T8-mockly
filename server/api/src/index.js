@@ -7,11 +7,7 @@ const PORT = parseInt(process.env.PORT || '3001')
 const app = express()
   .use(
     cors({
-      origin: [
-        'http://localhost:3000',
-        'http://127.0.0.1',
-        'http://localhost:3003',
-      ],
+      origin: ['http://localhost:3000', 'http://127.0.0.1'],
     })
   )
   .use(express.json())
