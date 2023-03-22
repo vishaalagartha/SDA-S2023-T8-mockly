@@ -17,18 +17,11 @@ class MatchController {
   async findMatches(preferences, schedule) {
     const { interviewer, field, difficulty } = preferences
     const preference = new PreferenceBuilder().interviewer(interviewer).field(field).difficulty(difficulty).make()
-    const allUsers = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/`, { method: 'GET' })
-    console.log(allUsers.body)
-    return allUsers
-    /*
-      Pseudocode:
-      interviewers = getAllUsers().filter(user => user.isInterviewer)
-      interviewers = preference.filterByPreferences(interviewers, preference)
-      interviewers = Schedulercomponent.filterBySchedule(interviewers)
-
-
-      return interviewers
-    */
+    const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/`, { method: 'GET' })
+    const allInterviewers = await res.json()
+    const filteredInterviewers = allInterviewers.filter(interviewer => preference.isMatch(interviewer))
+    // TODO: filter by schedule
+    return filteredInterviewers
   }
 }
 
