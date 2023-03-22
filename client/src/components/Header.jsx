@@ -28,6 +28,7 @@ const Header = ({ children }) => {
           theme="dark"
           mode="horizontal"
           items={items}
+          onClick={handleClick}
         />
       </Layout.Header>
       <Layout.Content style={{ margin: '24px 16px 0' }}> 

@@ -1,5 +1,7 @@
 import { MatchSchema } from "../models/MatchSchema"
 import PreferenceBuilder from "../preferences/PreferenceBuilder"
+import fetch from 'node-fetch'
+import { PORTS } from '../utils/constants'
 
 class MatchController {
   /*
@@ -12,9 +14,12 @@ class MatchController {
   /*
   * Find all potential matches given preferences and schedule
   */
-  findMatches(preferences, schedule) {
+  async findMatches(preferences, schedule) {
     const { interviewer, field, difficulty } = preferences
     const preference = new PreferenceBuilder().interviewer(interviewer).field(field).difficulty(difficulty).make()
+    const allUsers = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/`, { method: 'GET' })
+    console.log(allUsers.body)
+    return allUsers
     /*
       Pseudocode:
       interviewers = getAllUsers().filter(user => user.isInterviewer)
@@ -27,4 +32,4 @@ class MatchController {
   }
 }
 
-export default MatchController
+export default new MatchController

@@ -35,7 +35,8 @@ const InterviewModal = ({ open, setOpen }) => {
         throw new Error('Please select at least 1 time slot.')   
       }   
       const formattedTimes = times.map(t => dayjs(t, 'MM/DD/YY h A').unix())
-      const data = { ...form.getFieldsValue(), dates: formattedTimes }
+      // eslint-disable-next-line no-unused-vars
+      const { date, ...data } = { ...form.getFieldsValue(), times: formattedTimes }
       const res = await createInterview(data)
       console.log(res)
     } catch (e) {
