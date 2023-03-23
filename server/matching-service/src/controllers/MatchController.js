@@ -1,4 +1,4 @@
-import { MatchSchema } from "../models/MatchSchema"
+import Match from "../models/Match"
 import PreferenceBuilder from "../preferences/PreferenceBuilder"
 import fetch from 'node-fetch'
 import { PORTS } from '../utils/constants'
@@ -7,8 +7,10 @@ class MatchController {
   /*
   * Create a match between a interviewer and interviewee
   */
-  create(interviewer, interviewee, preferences, time) {
-    return new MatchSchema({ interviewer, interviewee, preferences, time })
+  async create(interviewer, interviewee, preferences, time) {
+    const match = new Match({ interviewer, interviewee, preferences, time })
+    await match.save()
+    return match
   }
 
   /*
@@ -21,7 +23,8 @@ class MatchController {
     const allInterviewers = await res.json()
     const filteredInterviewers = allInterviewers.filter(interviewer => preference.isMatch(interviewer))
     // TODO: filter by schedule
-    return filteredInterviewers
+    // return filteredInterviewers
+    return allInterviewers.slice(0, 3)
   }
 }
 

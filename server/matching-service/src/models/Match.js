@@ -1,4 +1,5 @@
-import { Schema } from 'mongoose'
+
+import mongoose, { Schema } from 'mongoose'
 
 const MatchSchema = new Schema({
   // uuid of interviewer
@@ -15,4 +16,4 @@ const MatchSchema = new Schema({
   preferences: Object
 })
 
-export { MatchSchema }
+export default mongoose.model('Match', MatchSchema)
