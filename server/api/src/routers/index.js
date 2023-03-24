@@ -1,7 +1,7 @@
-import { Router } from "express"
+import { Router } from 'express'
 import login from './login'
 import matching from './matching'
-import authenticate from "../middlewares/authenticate"
+import authenticate from '../middlewares/authenticate'
 
 export default Router()
   .use('/login', login)

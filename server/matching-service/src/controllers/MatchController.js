@@ -1,30 +1,31 @@
-import { MatchSchema } from "../models/MatchSchema"
+import Match from "../models/Match"
 import PreferenceBuilder from "../preferences/PreferenceBuilder"
+import fetch from 'node-fetch'
+import { PORTS } from '../utils/constants'
 
 class MatchController {
   /*
   * Create a match between a interviewer and interviewee
   */
-  create(interviewer, interviewee, preferences, time) {
-    return new MatchSchema({ interviewer, interviewee, preferences, time })
+  async create(interviewer, interviewee, preferences, time) {
+    const match = new Match({ interviewer, interviewee, preferences, time })
+    await match.save()
+    return match
   }
 
   /*
   * Find all potential matches given preferences and schedule
   */
-  findMatches(preferences, schedule) {
+  async findMatches(preferences, schedule) {
     const { interviewer, field, difficulty } = preferences
     const preference = new PreferenceBuilder().interviewer(interviewer).field(field).difficulty(difficulty).make()
-    /*
-      Pseudocode:
-      interviewers = getAllUsers().filter(user => user.isInterviewer)
-      interviewers = preference.filterByPreferences(interviewers, preference)
-      interviewers = Schedulercomponent.filterBySchedule(interviewers)
-
-
-      return interviewers
-    */
+    const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/`, { method: 'GET' })
+    const allInterviewers = await res.json()
+    const filteredInterviewers = allInterviewers.filter(interviewer => preference.isMatch(interviewer))
+    // TODO: filter by schedule
+    // return filteredInterviewers
+    return allInterviewers.slice(0, 3)
   }
 }
 
-export default MatchController
+export default new MatchController
