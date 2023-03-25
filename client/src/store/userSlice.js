@@ -99,5 +99,5 @@ export const {
   addCourse,
   removeCourse,
 } = userSlice.actions
-
+export const userSelector = (state) => state.user
 export default userSlice.reducer
