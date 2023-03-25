@@ -1,12 +1,11 @@
 import { Router } from 'express'
 import fetch from 'node-fetch'
 import { validate } from '../utils/token'
+import { setUserIdFromToken } from '../middlewares/setUserIdFromToken'
+import { headers } from '../utils/constants'
 
 const router = Router()
 const BASE_URL = 'http://mockly-profile-service:3005/users'
-const HEADERS = {
-  'Content-Type': 'application/json',
-}
 
 // GET /users
 // Get user by ID
@@ -16,7 +15,7 @@ router.get('/', async (request, response) => {
     const token = authHeader.split(' ')[1]
     const decodedToken = validate(token)
     const resp = await fetch(`${BASE_URL}/${decodedToken.uid}`, {
-      headers: HEADERS,
+      headers,
     })
     const user = await resp.json()
     response.json(user)
@@ -27,45 +26,45 @@ router.get('/', async (request, response) => {
 
 // PUT /users/personal-identity
 // Update personal identity fields for a user
-router.put('/personal-identity', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
-  try {
-    const { body } = request
-    body.userId = decodedToken.uid
-    const resp = await fetch(`${BASE_URL}/personal-identity`, {
+router.put(
+  '/personal-identity',
+  setUserIdFromToken,
+  async (request, response) => {
+    const options = {
       method: 'PUT',
-      body: JSON.stringify(body),
-      headers: HEADERS,
-    })
-    const updatedUser = await resp.json()
-    response.status(resp.status).json(updatedUser)
-  } catch (e) {
-    response.status(500).send('Internal Server Error')
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/personal-identity`, options)
+      const updatedUser = await resp.json()
+      response.status(resp.status).json(updatedUser)
+    } catch (e) {
+      response.status(500).send('Internal Server Error')
+    }
   }
-})
+)
 
 // PUT /users/personal-information/:id
 // Update personal information fields for a user
-router.put('/personal-information', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
-  try {
-    const { body } = request
-    body.userId = decodedToken.uid
-    const resp = await fetch(`${BASE_URL}/personal-information`, {
+router.put(
+  '/personal-information',
+  setUserIdFromToken,
+  async (request, response) => {
+    const options = {
       method: 'PUT',
-      body: JSON.stringify(body),
-      headers: HEADERS,
-    })
-    const updatedUser = await resp.json()
-    response.json(updatedUser)
-  } catch (e) {
-    response.status(500).send('Internal Server Error')
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/personal-information`, options)
+      const updatedUser = await resp.json()
+      response.json(updatedUser)
+    } catch (e) {
+      response.status(500).send('Internal Server Error')
+    }
   }
-})
+)
 
 // POST /users/education
 // Create a new education entry for a user
@@ -75,7 +74,7 @@ router.post('/education', async (request, response) => {
     const resp = await fetch(`${BASE_URL}/education`, {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: HEADERS,
+      headers,
     })
     const newEducation = await resp.json()
     response.json(newEducation)
@@ -92,7 +91,7 @@ router.put('/education', async (request, response) => {
     const resp = await fetch(`${BASE_URL}/education`, {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: HEADERS,
+      headers,
     })
     const updatedEducation = await resp.json()
     response.json(updatedEducation)
@@ -109,7 +108,7 @@ router.delete('/education', async (request, response) => {
     const resp = await fetch(`${BASE_URL}/education`, {
       method: 'DELETE',
       body: JSON.stringify(body),
-      headers: HEADERS,
+      headers,
     })
     response.sendStatus(resp.status)
   } catch (e) {
@@ -119,18 +118,14 @@ router.delete('/education', async (request, response) => {
 
 // POST /users/skills
 // Create a new skill for a user
-router.post('/skills', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
+router.post('/skills', setUserIdFromToken, async (request, response) => {
+  const options = {
+    method: 'POST',
+    body: JSON.stringify(request.body),
+    headers,
+  }
   try {
-    const { body } = request
-    body.userId = decodedToken.uid
-    const resp = await fetch(`${BASE_URL}/skills`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: HEADERS,
-    })
+    const resp = await fetch(`${BASE_URL}/skills`, options)
     const skill = await resp.json()
     response.json(skill)
   } catch (e) {
@@ -140,18 +135,14 @@ router.post('/skills', async (request, response) => {
 
 // DELETE /users/skills
 // Delete a skill for a user
-router.delete('/skills', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
+router.delete('/skills', setUserIdFromToken, async (request, response) => {
+  const options = {
+    method: 'DELETE',
+    body: JSON.stringify(request.body),
+    headers,
+  }
   try {
-    const { body } = request
-    body.userId = decodedToken.uid
-    const resp = await fetch(`${BASE_URL}/skills`, {
-      method: 'DELETE',
-      body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
-    })
+    const resp = await fetch(`${BASE_URL}/skills`, options)
     const message = await resp.json()
     response.status(resp.status).json({ message: message })
   } catch (e) {
@@ -161,18 +152,14 @@ router.delete('/skills', async (request, response) => {
 
 // POST /users/courses
 // Create a new course entry for a user
-router.post('/courses', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
+router.post('/courses', setUserIdFromToken, async (request, response) => {
+  const options = {
+    method: 'POST',
+    body: JSON.stringify(request.body),
+    headers,
+  }
   try {
-    const { body } = request
-    body.userId = decodedToken.uid
-    const resp = await fetch(`${BASE_URL}/courses`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: HEADERS,
-    })
+    const resp = await fetch(`${BASE_URL}/courses`, options)
     const course = await resp.json()
     response.json(course)
   } catch (e) {
@@ -182,18 +169,14 @@ router.post('/courses', async (request, response) => {
 
 // DELETE /users/courses/:id
 // Delete an existing course entry for a user
-router.delete('/courses', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
+router.delete('/courses', setUserIdFromToken, async (request, response) => {
+  const options = {
+    method: 'DELETE',
+    body: JSON.stringify(request.body),
+    headers,
+  }
   try {
-    const { body } = request
-    body.userId = decodedToken.uid
-    const resp = await fetch(`${BASE_URL}/courses`, {
-      method: 'DELETE',
-      body: JSON.stringify(body),
-      headers: HEADERS,
-    })
+    const resp = await fetch(`${BASE_URL}/courses`, options)
     const message = await resp.json()
     response.status(resp.status).json({ message: message })
   } catch (e) {
@@ -293,16 +276,11 @@ router.delete('/experiences', async (request, response) => {
 
 // PUT /users/summary
 // Update the summary field for a user
-router.put('/summary', async (request, response) => {
-  const authHeader = request.header('authorization')
-  const token = authHeader.split(' ')[1]
-  const decodedToken = validate(token)
-  const { body } = request
-  body.userId = decodedToken.uid
+router.put('/summary', setUserIdFromToken, async (request, response) => {
   const options = {
     method: 'PUT',
-    body: JSON.stringify(body),
-    headers: HEADERS,
+    body: JSON.stringify(request.body),
+    headers,
   }
   try {
     const resp = await fetch(`${BASE_URL}/summary`, options)

@@ -661,11 +661,10 @@ export const deleteExperience = async (req, res) => {
 
 export const updateSummary = async (req, res) => {
   const { userId, summary } = req.body
-  console.log(userId, summary)
   // Check if request body contains required fields
-  if (!userId || !summary) {
+  if (!userId) {
     return res.status(400).json({
-      message: 'Request body must contain userId and summary fields',
+      message: 'Request body must contain userId field',
     })
   }
   try {
@@ -686,5 +685,4 @@ export const updateSummary = async (req, res) => {
       .status(500)
       .json({ message: 'Error updating summary', error: error })
   }
-  // Update user document with new summary value
 }
