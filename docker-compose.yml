@@ -1,8 +1,10 @@
-version: '3.1'
+version: "3.1"
 services:
   mongo:
     image: mongo
     restart: always
+    ports:
+      - 27107:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -44,7 +46,7 @@ services:
     ports:
       - 3002:3002
     volumes:
-       - ./server/feedback-service/src:/app/src
+      - ./server/feedback-service/src:/app/src
   matching-service:
     container_name: mockly-matching-service
     build:

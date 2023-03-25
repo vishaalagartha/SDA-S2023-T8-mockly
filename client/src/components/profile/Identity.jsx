@@ -4,6 +4,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserIdentity } from '../../store/userSelector'
 import { setIdentity } from '../../store/userSlice'
+import { updatePersonalIdentityAPI } from '../../api/userProfile'
 
 const { Title } = Typography
 
@@ -11,6 +12,7 @@ const IdentityCard = () => {
   const dispatch = useDispatch()
 
   const [editMode, setEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const userIdentity = useSelector(getUserIdentity)
 
@@ -31,8 +33,18 @@ const IdentityCard = () => {
     setEditMode((prevEditMode) => !prevEditMode)
   }
 
-  const handleSaveClick = () => {
-    dispatch(setIdentity(formData))
+  const handleSaveClick = async () => {
+    setLoading(true)
+    try {
+      const res = await updatePersonalIdentityAPI({ userId: '', ...formData })
+      console.log('Personal Identity added: ', res)
+      if (res.status === 200) {
+        dispatch(setIdentity(formData))
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    setLoading(false)
     setEditMode(false)
   }
 
@@ -57,6 +69,7 @@ const IdentityCard = () => {
     <Card
       className='user-profile-card'
       title='Identity'
+      loading={loading}
       extra={
         <Button type='text' onClick={handleEditClick}>
           <EditOutlined />

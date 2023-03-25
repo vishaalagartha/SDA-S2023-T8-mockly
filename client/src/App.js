@@ -17,7 +17,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path='/profile' element={<ProfilePage />} />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path='/login' element={<LandingPage />} />
       </Routes>
     </Router>

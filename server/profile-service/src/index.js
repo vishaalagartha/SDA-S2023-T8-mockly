@@ -3,6 +3,7 @@ import cors from 'cors'
 import * as Database from './utils/Database'
 import userRoutes from './routes/userRoutes'
 
+// eslint-disable-next-line no-undef
 const PORT = parseInt(process.env.PORT || '3005')
 
 const app = express().use(
@@ -10,11 +11,11 @@ const app = express().use(
     origin: ['http://localhost:3001', 'http://localhost:3003'],
   })
 )
-
+app.use(express.json())
 app.get('/api/', (req, res) => {
   res.json({ message: 'Hello from Profile' })
 })
-app.use('/', userRoutes)
+app.use('/users', userRoutes)
 
 Database.connect()
 

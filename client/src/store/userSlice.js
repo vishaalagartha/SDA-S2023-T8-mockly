@@ -24,7 +24,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setIdentity: (state, action) => {
+    setIdentity: async (state, action) => {
       const { firstName, lastName, organization, position } = action.payload
       return {
         ...state,
