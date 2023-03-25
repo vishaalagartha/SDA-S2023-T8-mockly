@@ -36,8 +36,8 @@ const IdentityCard = () => {
   const handleSaveClick = async () => {
     setLoading(true)
     try {
-      const res = await updatePersonalIdentityAPI({ userId: '', ...formData })
-      console.log('Personal Identity added: ', res)
+      const res = await updatePersonalIdentityAPI({ ...formData })
+      console.log('Personal Identity updated: ', res)
       if (!res.status) {
         dispatch(setIdentity(formData))
       }

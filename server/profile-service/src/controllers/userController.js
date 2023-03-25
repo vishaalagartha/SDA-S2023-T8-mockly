@@ -101,6 +101,11 @@ export const updatePersonalIdentity = async (req, res) => {
       { new: true }
     )
 
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
+      })
+    }
     // Return the updated user document
     return res.status(200).json({
       message: 'Personal identity updated',
@@ -115,37 +120,44 @@ export const updatePersonalIdentity = async (req, res) => {
   }
 }
 
-export const updatePersonalInformation = (req, res) => {
+export const updatePersonalInformation = async (req, res) => {
   const { userId, email, phoneNumber, pronouns, gender, ethnicity } = req.body
 
   // Check if request body contains any fields to update
-  if (!email && !phoneNumber && !pronouns && !gender && !ethnicity) {
+  if (!email && !userId) {
     return res.status(400).json({
-      message: 'Request body must contain at least one field to update',
+      message: 'Missing required fields',
     })
   }
 
-  // Update user document with new values
-  User.findByIdAndUpdate(
-    userId,
-    { email, phoneNumber, pronouns, gender, ethnicity },
-    { new: true, runValidators: true }
-  )
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({
-          message: `User with ID ${req.params.id} not found`,
-        })
-      }
-      return res.status(200).json(user)
-    })
-    .catch((error) => {
-      console.error(error)
-      return res.status(500).json({
-        message: 'Error updating personal information',
-        error: error,
+  try {
+    // Update user document with new values
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        email,
+        phoneNumber,
+        pronouns,
+        gender,
+        ethnicity,
+      },
+      { new: true }
+    )
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
       })
+    }
+    return res
+      .status(200)
+      .json({ message: 'Personal Information Updated', user: updatedUser })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({
+      message: 'Error updating personal information',
+      error: error,
     })
+  }
 }
 
 // Create a new education entry for a user

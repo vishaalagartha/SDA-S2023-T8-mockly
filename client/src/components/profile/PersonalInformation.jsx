@@ -6,6 +6,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPersonalInformation } from '../../store/userSlice'
 import { getUserPersonalInformation } from '../../store/userSelector'
+import { updatePersonalInformationAPI } from '../../api/userProfile'
 
 const { Paragraph } = Typography
 const { Option } = Select
@@ -39,7 +40,7 @@ const PersonalInformationCard = () => {
 
   // value is set when click on edit icon on top-right of card.
   const [editMode, setEditMode] = useState(false)
-
+  const [loading, setLoading] = useState(false)
   const user = useSelector(getUserPersonalInformation)
 
   // used to save the form's state
@@ -64,8 +65,18 @@ const PersonalInformationCard = () => {
   }
 
   // dispatches action to save personal information and sets edit mode to false
-  const handleSaveClick = () => {
-    dispatch(setPersonalInformation(formData))
+  const handleSaveClick = async () => {
+    setLoading(true)
+    try {
+      const res = await updatePersonalInformationAPI({ ...formData })
+      console.log('Personal Information updated: ', res)
+      if (!res.status) {
+        dispatch(setPersonalInformation(formData))
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    setLoading(false)
     setEditMode(false)
   }
 
@@ -101,6 +112,7 @@ const PersonalInformationCard = () => {
     <Card
       className='user-profile-card'
       title='Personal Information'
+      loading={loading}
       extra={
         <Button type='text' onClick={handleEditClick}>
           <EditOutlined />

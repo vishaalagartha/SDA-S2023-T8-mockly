@@ -49,8 +49,12 @@ router.put('/personal-identity', async (request, response) => {
 // PUT /users/personal-information/:id
 // Update personal information fields for a user
 router.put('/personal-information', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   try {
     const { body } = request
+    body.userId = decodedToken.uid
     const resp = await fetch(`${BASE_URL}/personal-information`, {
       method: 'PUT',
       body: JSON.stringify(body),

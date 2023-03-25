@@ -24,3 +24,16 @@ export const fetchUserAPI = async () => {
     throw error
   }
 }
+
+export const updatePersonalInformationAPI = async (payload) => {
+  try {
+    const response = await request('users/personal-information', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    })
+    return response
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
