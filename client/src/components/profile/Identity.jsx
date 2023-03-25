@@ -38,7 +38,7 @@ const IdentityCard = () => {
     try {
       const res = await updatePersonalIdentityAPI({ userId: '', ...formData })
       console.log('Personal Identity added: ', res)
-      if (res.status === 200) {
+      if (!res.status) {
         dispatch(setIdentity(formData))
       }
     } catch (e) {

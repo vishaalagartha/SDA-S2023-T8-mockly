@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { Row, Col } from 'antd'
 import IdentityCard from '../components/profile/Identity'
 import SkillsCard from '../components/profile/Skills'
@@ -8,10 +9,27 @@ import SummaryCard from '../components/profile/Summary'
 import EducationCard from '../components/profile/Education'
 import ExperienceCard from '../components/profile/Experience'
 import ProjectsCard from '../components/profile/Projects'
+import { fetchUserAPI } from '../api/userProfile'
+import { setUser } from '../store/userSlice'
 
 import '../styles/profile.css'
 
 const ProfilePage = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const getUserDetails = async () => {
+      try {
+        const response = await fetchUserAPI()
+        console.log('Profile Page', response)
+        dispatch(setUser(response))
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getUserDetails()
+  }, [dispatch])
+
   return (
     <div className='user-profile'>
       <Row justify='center' gutter={[16, 16]}>

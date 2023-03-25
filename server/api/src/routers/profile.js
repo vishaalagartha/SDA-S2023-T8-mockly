@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import fetch from 'node-fetch'
+import { validate } from '../utils/token'
 
 const router = Router()
 const BASE_URL = 'http://mockly-profile-service:3005/users'
@@ -11,8 +12,12 @@ const HEADERS = {
 // Get user by ID
 router.get('/', async (request, response) => {
   try {
-    const { id } = request.query
-    const resp = await fetch(`${BASE_URL}/${id}`, { headers: HEADERS })
+    const authHeader = request.header('authorization')
+    const token = authHeader.split(' ')[1]
+    const decodedToken = validate(token)
+    const resp = await fetch(`${BASE_URL}/${decodedToken.uid}`, {
+      headers: HEADERS,
+    })
     const user = await resp.json()
     response.json(user)
   } catch (e) {
@@ -23,8 +28,12 @@ router.get('/', async (request, response) => {
 // PUT /users/personal-identity
 // Update personal identity fields for a user
 router.put('/personal-identity', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   try {
     const { body } = request
+    body.userId = decodedToken.uid
     const resp = await fetch(`${BASE_URL}/personal-identity`, {
       method: 'PUT',
       body: JSON.stringify(body),

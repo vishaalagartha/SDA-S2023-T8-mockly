@@ -2,7 +2,7 @@ import { assign, findIndex, isEmpty } from 'lodash'
 import User from '../models/user'
 
 export const getUserById = (req, res) => {
-  const { userId } = req.body
+  const userId = req.params.userId
 
   User.findById(userId)
     .then((user) => {

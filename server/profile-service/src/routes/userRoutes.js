@@ -25,7 +25,7 @@ const router = Router()
 
 // GET /users
 // Get user by ID
-router.get('/', getUserById)
+router.get('/:userId', getUserById)
 
 // POST /users
 // Create new user

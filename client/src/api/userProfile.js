@@ -12,3 +12,15 @@ export const updatePersonalIdentityAPI = async (payload) => {
     throw error
   }
 }
+
+export const fetchUserAPI = async () => {
+  try {
+    const response = await request('users', {
+      method: 'GET',
+    })
+    return response
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}

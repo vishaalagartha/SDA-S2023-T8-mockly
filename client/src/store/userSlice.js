@@ -24,7 +24,13 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setIdentity: async (state, action) => {
+    setUser: (state, action) => {
+      return {
+        ...state,
+        ...action.payload,
+      }
+    },
+    setIdentity: (state, action) => {
       const { firstName, lastName, organization, position } = action.payload
       return {
         ...state,
@@ -98,6 +104,7 @@ export const {
   removeProject,
   addCourse,
   removeCourse,
+  setUser,
 } = userSlice.actions
 export const userSelector = (state) => state.user
 export default userSlice.reducer
