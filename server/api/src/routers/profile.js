@@ -119,38 +119,47 @@ router.delete('/education', async (request, response) => {
 
 // POST /users/skills
 // Create a new skill for a user
-router.post('/skills', async (req, res) => {
-  const options = {
-    method: 'POST',
-    body: JSON.stringify(req.body),
-    headers: { 'Content-Type': 'application/json' },
-  }
+router.post('/skills', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   try {
-    const resp = await fetch(`${baseUrl}/skills`, options)
+    const { body } = request
+    body.userId = decodedToken.uid
+    const resp = await fetch(`${BASE_URL}/skills`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: HEADERS,
+    })
     const skill = await resp.json()
-    res.json(skill)
+    response.json(skill)
   } catch (e) {
-    res.status(500)
+    response.status(500).send('Internal Server Error')
   }
 })
 
 // DELETE /users/skills
 // Delete a skill for a user
-router.delete('/skills', async (req, res) => {
-  const options = {
-    method: 'DELETE',
-    body: JSON.stringify(req.body),
-    headers: { 'Content-Type': 'application/json' },
-  }
+router.delete('/skills', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   try {
-    const resp = await fetch(`${baseUrl}/skills`, options)
+    const { body } = request
+    body.userId = decodedToken.uid
+    const resp = await fetch(`${BASE_URL}/skills`, {
+      method: 'DELETE',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    })
     if (resp.ok) {
-      res.status(204).send()
+      response.status(200).json({ message: 'Skill deleted successfully' })
     } else {
-      res.status(resp.status)
+      const message = await resp.json()
+      response.status(resp.status).json({ message: message })
     }
   } catch (e) {
-    res.status(500)
+    response.status(500).send('Internal Server Error')
   }
 })
 

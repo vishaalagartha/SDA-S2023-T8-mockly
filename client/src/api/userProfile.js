@@ -37,3 +37,15 @@ export const updatePersonalInformationAPI = async (payload) => {
     throw error
   }
 }
+
+export const addSkillAPI = async (payload) =>
+  request('users/skills', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+
+export const deleteSkillAPI = async (payload) =>
+  request('users/skills', {
+    method: 'DELETE',
+    body: JSON.stringify(payload),
+  })

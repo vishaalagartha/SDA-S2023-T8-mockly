@@ -4,31 +4,48 @@ import { addSkill, removeSkill } from '../../store/userSlice'
 import { getUserSkills } from '../../store/userSelector'
 import { Card, Tag, Input, Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
+import { addSkillAPI, deleteSkillAPI } from '../../api/userProfile'
 
 const SkillsCard = () => {
   const dispatch = useDispatch()
 
   const skills = useSelector(getUserSkills)
   const [newSkill, setNewSkill] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleNewSkillChange = (event) => {
     setNewSkill(event.target.value)
   }
 
-  const handleAddSkillClick = () => {
+  const handleAddSkillClick = async () => {
     if (newSkill !== '') {
-      // TODO: use uuid instead
-      const newSkillObj = {
-        id: Math.floor(Math.random() * 1001),
-        text: newSkill,
+      setLoading(true)
+      try {
+        const res = await addSkillAPI({ skillName: newSkill })
+        console.log('Added new skills', res)
+        if (!res.status) {
+          dispatch(addSkill(res))
+        }
+      } catch (e) {
+        console.log(e)
       }
-      dispatch(addSkill(newSkillObj))
+      setLoading(false)
       setNewSkill('')
     }
   }
 
-  const handleRemoveSkillClick = (skillToRemove) => {
-    dispatch(removeSkill({ id: skillToRemove }))
+  const handleRemoveSkillClick = async (skillToRemove) => {
+    setLoading(true)
+    try {
+      const res = await deleteSkillAPI({ skillId: skillToRemove })
+      console.log('Skill with ID:', res)
+      if (!res.status) {
+        dispatch(removeSkill({ skillId: skillToRemove }))
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    setLoading(false)
   }
 
   const renderSkills = () => {
@@ -36,16 +53,16 @@ const SkillsCard = () => {
       <Tag
         className='user-skill-tag'
         closable
-        key={skill.id}
-        onClose={() => handleRemoveSkillClick(skill.id)}
+        key={skill._id}
+        onClose={() => handleRemoveSkillClick(skill._id)}
       >
-        {skill.text}
+        {skill.title}
       </Tag>
     ))
   }
 
   return (
-    <Card className='user-profile-card' title='Skills'>
+    <Card className='user-profile-card' title='Skills' loading={loading}>
       {renderSkills()}
       <div className='user-skill-actions-div'>
         <Input

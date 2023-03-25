@@ -300,7 +300,6 @@ export const deleteEducation = async (req, res) => {
 export const createSkill = async (req, res) => {
   try {
     const { userId, skillName } = req.body
-
     // Validate request body
     if (!userId || !skillName) {
       return res.status(400).json({ message: 'Missing required fields' })
@@ -312,7 +311,11 @@ export const createSkill = async (req, res) => {
       { $push: { skills: { title: skillName } } },
       { new: true }
     )
-
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
+      })
+    }
     // Return created skill object
     return res.status(201).json(user.skills.slice(-1)[0])
   } catch (error) {
@@ -339,7 +342,11 @@ export const deleteSkill = async (req, res) => {
       { $pull: { skills: { _id: skillId } } },
       { new: true }
     )
-
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
+      })
+    }
     // Check if skill was found and removed
     if (!user) {
       return res.status(404).json({ message: 'Skill not found' })
