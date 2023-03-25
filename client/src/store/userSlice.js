@@ -85,7 +85,7 @@ const userSlice = createSlice({
       state.courses = concat(state.courses, action.payload)
     },
     removeCourse: (state, action) => {
-      state.courses = reject(state.courses, { id: action.payload.id })
+      state.courses = reject(state.courses, { _id: action.payload.courseId })
     },
   },
 })

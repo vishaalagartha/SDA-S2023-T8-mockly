@@ -298,13 +298,13 @@ export const deleteEducation = async (req, res) => {
 
 // Create a new skill entry for a user
 export const createSkill = async (req, res) => {
-  try {
-    const { userId, skillName } = req.body
-    // Validate request body
-    if (!userId || !skillName) {
-      return res.status(400).json({ message: 'Missing required fields' })
-    }
+  const { userId, skillName } = req.body
+  // Validate request body
+  if (!userId || !skillName) {
+    return res.status(400).json({ message: 'Missing required fields' })
+  }
 
+  try {
     // Find user and add skill to skills array
     const user = await User.findByIdAndUpdate(
       userId,
@@ -328,14 +328,14 @@ export const createSkill = async (req, res) => {
 
 // Delete an existing skill entry for a user
 export const deleteSkill = async (req, res) => {
+  const { userId, skillId } = req.body
+
+  // Validate request body
+  if (!userId || !skillId) {
+    return res.status(400).json({ message: 'Missing required fields' })
+  }
+
   try {
-    const { userId, skillId } = req.body
-
-    // Validate request body
-    if (!userId || !skillId) {
-      return res.status(400).json({ message: 'Missing required fields' })
-    }
-
     // Find user and remove skill from skills array
     const user = await User.findByIdAndUpdate(
       userId,
@@ -353,7 +353,9 @@ export const deleteSkill = async (req, res) => {
     }
 
     // Return success response
-    return res.sendStatus(204)
+    return res
+      .status(200)
+      .json({ message: `Skill with ID: ${skillId} deleted successfully` })
   } catch (error) {
     console.error(error)
     return res
@@ -363,7 +365,7 @@ export const deleteSkill = async (req, res) => {
 }
 
 // Creates a new course entry for a user
-export const createCourse = (req, res) => {
+export const createCourse = async (req, res) => {
   const { userId, courseName } = req.body
 
   if (!userId || !courseName) {
@@ -371,59 +373,55 @@ export const createCourse = (req, res) => {
       message: 'Request body must contain userId and courseName fields',
     })
   }
-
-  User.findByIdAndUpdate(
-    userId,
-    { $push: { courses: { title: courseName } } },
-    { new: true }
-  )
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({
-          message: `User with ID ${userId} not found`,
-        })
-      }
-      return res.status(201).json(user.courses[user.courses.length - 1])
-    })
-    .catch((error) => {
-      console.error(error)
-      return res.status(500).json({
-        message: 'Error creating new course entry',
-        error: error,
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { courses: { title: courseName } } },
+      { new: true }
+    )
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
       })
-    })
+    }
+    return res.status(201).json(user.courses[user.courses.length - 1])
+  } catch (error) {
+    console.error(error)
+    return res
+      .status(500)
+      .json({ message: 'Error creating skill', error: error })
+  }
 }
 
 // Deletes an existing course entry for a user
-export const deleteCourse = (req, res) => {
+export const deleteCourse = async (req, res) => {
   const { userId, courseId } = req.body
-
   if (!userId || !courseId) {
     return res.status(400).json({
       message: 'Request body must contain userId and courseId fields',
     })
   }
 
-  User.findByIdAndUpdate(
-    userId,
-    { $pull: { courses: { _id: courseId } } },
-    { new: true }
-  )
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({
-          message: `User with ID ${userId} not found`,
-        })
-      }
-      return res.status(204).json()
-    })
-    .catch((error) => {
-      console.error(error)
-      return res.status(500).json({
-        message: 'Error deleting course entry',
-        error: error,
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { courses: { _id: courseId } } },
+      { new: true }
+    )
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
       })
-    })
+    }
+    return res
+      .status(200)
+      .json({ message: `Course with ID: ${courseId} deleted succesfully` })
+  } catch (error) {
+    console.error(error)
+    return res
+      .status(500)
+      .json({ message: 'Error deleting skill', error: error })
+  }
 }
 
 export const createProject = async (req, res) => {

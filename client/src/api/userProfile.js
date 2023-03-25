@@ -28,3 +28,15 @@ export const deleteSkillAPI = async (payload) =>
     method: 'DELETE',
     body: JSON.stringify(payload),
   })
+
+export const addCourseAPI = async (payload) =>
+  request('users/courses', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+
+export const deleteCourseAPI = async (payload) =>
+  request('users/courses', {
+    method: 'DELETE',
+    body: JSON.stringify(payload),
+  })

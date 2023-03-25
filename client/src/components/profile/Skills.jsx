@@ -38,7 +38,7 @@ const SkillsCard = () => {
     setLoading(true)
     try {
       const res = await deleteSkillAPI({ skillId: skillToRemove })
-      console.log('Skill with ID:', res)
+      console.log(res.message)
       if (!res.status) {
         dispatch(removeSkill({ skillId: skillToRemove }))
       }

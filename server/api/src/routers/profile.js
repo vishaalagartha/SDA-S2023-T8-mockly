@@ -134,7 +134,7 @@ router.post('/skills', async (request, response) => {
     const skill = await resp.json()
     response.json(skill)
   } catch (e) {
-    response.status(500).send('Internal Server Error')
+    response.status(500).json({ message: 'Internal Server Error' })
   }
 })
 
@@ -152,50 +152,52 @@ router.delete('/skills', async (request, response) => {
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
     })
-    if (resp.ok) {
-      response.status(200).json({ message: 'Skill deleted successfully' })
-    } else {
-      const message = await resp.json()
-      response.status(resp.status).json({ message: message })
-    }
+    const message = await resp.json()
+    response.status(resp.status).json({ message: message })
   } catch (e) {
-    response.status(500).send('Internal Server Error')
+    response.status(500).json({ message: 'Internal Server Error' })
   }
 })
 
 // POST /users/courses
 // Create a new course entry for a user
-router.post('/courses', async (req, res) => {
-  const options = {
-    method: 'POST',
-    body: JSON.stringify(req.body),
-    headers: { 'Content-Type': 'application/json' },
-  }
+router.post('/courses', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   try {
-    const resp = await fetch(`${baseUrl}/courses`, options)
+    const { body } = request
+    body.userId = decodedToken.uid
+    const resp = await fetch(`${BASE_URL}/courses`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: HEADERS,
+    })
     const course = await resp.json()
-    res.json(course)
+    response.json(course)
   } catch (e) {
-    res.status(500)
+    response.status(500).json({ message: 'Internal Server Error' })
   }
 })
 
 // DELETE /users/courses/:id
 // Delete an existing course entry for a user
-router.delete('/courses/:id', async (req, res) => {
-  const options = {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-  }
+router.delete('/courses', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   try {
-    const resp = await fetch(`${baseUrl}/courses/${req.params.id}`, options)
-    if (resp.ok) {
-      res.status(204).send()
-    } else {
-      res.status(resp.status)
-    }
+    const { body } = request
+    body.userId = decodedToken.uid
+    const resp = await fetch(`${BASE_URL}/courses`, {
+      method: 'DELETE',
+      body: JSON.stringify(body),
+      headers: HEADERS,
+    })
+    const message = await resp.json()
+    response.status(resp.status).json({ message: message })
   } catch (e) {
-    res.status(500)
+    response.status(500).json({ message: 'Internal Server Error' })
   }
 })
 
