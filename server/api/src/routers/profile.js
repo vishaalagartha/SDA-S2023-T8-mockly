@@ -294,12 +294,20 @@ router.delete('/experiences', async (request, response) => {
 // PUT /users/summary
 // Update the summary field for a user
 router.put('/summary', async (request, response) => {
+  const authHeader = request.header('authorization')
+  const token = authHeader.split(' ')[1]
+  const decodedToken = validate(token)
   const { body } = request
-  const options = { method: 'PUT', body: JSON.stringify(body), headers }
+  body.userId = decodedToken.uid
+  const options = {
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: HEADERS,
+  }
   try {
-    const resp = await fetch(`${baseUrl}/summary`, options)
-    const user = await resp.json()
-    response.json(user)
+    const resp = await fetch(`${BASE_URL}/summary`, options)
+    const respJSON = await resp.json()
+    response.json(respJSON)
   } catch (e) {
     response.status(500)
   }
@@ -309,7 +317,7 @@ router.put('/summary', async (request, response) => {
 // Retrieves a list of interviewers and their associated skills
 // Returns an array of objects, each containing the interviewer's name and their skills
 router.get('/interviewer', async (req, res) => {
-  const baseUrl = `${baseUrl}interviewer`
+  const baseUrl = `${BASE_URL}/interviewer`
   const options = { method: 'GET', headers }
   try {
     const resp = await fetch(baseUrl, options)

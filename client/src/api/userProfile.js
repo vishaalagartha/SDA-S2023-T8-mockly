@@ -40,3 +40,9 @@ export const deleteCourseAPI = async (payload) =>
     method: 'DELETE',
     body: JSON.stringify(payload),
   })
+
+export const updateSummaryAPI = async (payload) =>
+  request('users/summary', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })

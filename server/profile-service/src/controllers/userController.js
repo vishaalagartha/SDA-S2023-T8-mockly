@@ -420,7 +420,7 @@ export const deleteCourse = async (req, res) => {
     console.error(error)
     return res
       .status(500)
-      .json({ message: 'Error deleting skill', error: error })
+      .json({ message: 'Error deleting course', error: error })
   }
 }
 
@@ -659,35 +659,32 @@ export const deleteExperience = async (req, res) => {
   }
 }
 
-export const updateSummary = (req, res) => {
+export const updateSummary = async (req, res) => {
   const { userId, summary } = req.body
-
+  console.log(userId, summary)
   // Check if request body contains required fields
   if (!userId || !summary) {
     return res.status(400).json({
       message: 'Request body must contain userId and summary fields',
     })
   }
-
-  // Update user document with new summary value
-  User.findByIdAndUpdate(
-    userId,
-    { summary },
-    { new: true, runValidators: true }
-  )
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({
-          message: `User with ID ${userId} not found`,
-        })
-      }
-      return res.status(200).json(user)
-    })
-    .catch((error) => {
-      console.error(error)
-      return res.status(500).json({
-        message: 'Error updating summary',
-        error: error,
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { summary },
+      { new: true }
+    )
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`,
       })
-    })
+    }
+    return res.status(200).json({ summary: user.summary })
+  } catch (error) {
+    console.error(error)
+    return res
+      .status(500)
+      .json({ message: 'Error updating summary', error: error })
+  }
+  // Update user document with new summary value
 }

@@ -4,6 +4,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserSummary } from '../../store/userSelector'
 import { setSummary } from '../../store/userSlice'
+import { updateSummaryAPI } from '../../api/userProfile'
 
 const { Text } = Typography
 
@@ -13,6 +14,7 @@ const SummaryCard = () => {
   const label =
     'What are you passionate about? What are you looking for on Mockly?'
   const [editMode, setEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const userSummary = useSelector(getUserSummary)
 
@@ -25,8 +27,18 @@ const SummaryCard = () => {
     setEditMode((prevEditMode) => !prevEditMode)
   }
 
-  const handleSaveClick = () => {
-    dispatch(setSummary(formData))
+  const handleSaveClick = async () => {
+    setLoading(true)
+    try {
+      const res = await updateSummaryAPI({ ...formData })
+      console.log('Summary updated', res)
+      if (!res.status) {
+        dispatch(setSummary(res))
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    setLoading(false)
     setEditMode(false)
   }
 
@@ -46,6 +58,7 @@ const SummaryCard = () => {
     <Card
       className='user-profile-card'
       title='Summary'
+      loading={loading}
       extra={
         <Button type='text' onClick={handleEditClick}>
           <EditOutlined />
