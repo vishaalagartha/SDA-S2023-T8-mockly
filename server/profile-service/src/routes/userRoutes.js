@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import {
   getUserById,
+  createUser,
+  validateUserCredentials,
   updatePersonalIdentity,
   updatePersonalInformation,
   createEducation,
@@ -24,6 +26,14 @@ const router = Router()
 // GET /users
 // Get user by ID
 router.get('/', getUserById)
+
+// POST /users
+// Create new user
+router.post('/', createUser)
+
+// POST /users/credentials
+// validate andrewId and password for login process
+router.post('/credentials', validateUserCredentials)
 
 // PUT /users/personal-identity
 // Update personal identity fields for a user

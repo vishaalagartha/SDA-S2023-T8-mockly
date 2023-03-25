@@ -1,32 +1,32 @@
 import { Router } from 'express'
 import fetch from 'node-fetch'
-import { generate } from '../utils/token'
+
 const router = Router()
 const BASE_URL = 'http://mockly-profile-service:3005/users'
 const HEADERS = {
   'Content-Type': 'application/json',
 }
 
-// POST /login
-// Checks if user exists and Login User
+// POST /register
+// Register new User
 router.post('/', async (req, res) => {
   try {
     const { body } = req
-    // sending POST request to /users/credentials to validate andrewID and password with DB entry
-    const response = await fetch(`${BASE_URL}/credentials`, {
+    // sending POST request to /users to create new user if not exist
+    const response = await fetch(`${BASE_URL}`, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: HEADERS,
     })
     const responseJSON = await response.json()
-    if (response.status == 200) {
-      // user validated
-      const token = generate(responseJSON.userId)
+    if (response.status == 201) {
+      // new user created
+      const token = generate(responseJSON.user.id)
       res.status(response.status).json({ token })
     } else {
       /**
-       * 404 - user not found
-       * 401 - invalid credentials
+       * 400 - Missing required fields
+       * 409 - AndrewID is already taken
        */
       res.status(response.status).json(responseJSON)
     }

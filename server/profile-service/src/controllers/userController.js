@@ -22,6 +22,62 @@ export const getUserById = (req, res) => {
     })
 }
 
+export const createUser = async (req, res) => {
+  const { andrewId, password } = req.body
+
+  // Check if andrewId and password are provided
+  if (!andrewId || !password) {
+    return res.status(400).json({
+      message: 'Missing required fields',
+    })
+  }
+
+  try {
+    // Check if the andrewId is already taken
+    const existingUser = await User.findOne({ andrewId })
+    if (existingUser) {
+      return res.status(409).json({
+        message: 'andrewId is already taken',
+      })
+    }
+
+    // Create a new user document
+    const user = new User({ andrewId, password })
+
+    // Save the user document to the database
+    await user.save()
+
+    // Return success response with the created user document
+    return res.status(201).json({
+      message: 'User created successfully',
+      user,
+    })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({
+      message: 'Error creating user',
+      error,
+    })
+  }
+}
+
+export const validateUserCredentials = async (req, res) => {
+  const { andrewId, password } = req.body
+  try {
+    const user = await User.findOne({ andrewId })
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Invalid credentials' })
+    }
+    return res.status(200).json({ userId: user._id })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
 export const updatePersonalIdentity = async (req, res) => {
   const { userId, firstName, lastName, organization, position } = req.body
 
