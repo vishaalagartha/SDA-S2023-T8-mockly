@@ -14,4 +14,4 @@ class FeedbackController {
 
 }
 
-export default new FeedbaclController
+export default new FeedbackController
