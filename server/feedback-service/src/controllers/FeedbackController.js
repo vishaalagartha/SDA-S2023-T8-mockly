@@ -1,5 +1,5 @@
 import InterviewFeedback from "../models/InterviewFeedback"
-import PreferenceBuilder from "../preferences/PreferenceBuilder"
+
 import fetch from 'node-fetch'
 
 class FeedbackController {
