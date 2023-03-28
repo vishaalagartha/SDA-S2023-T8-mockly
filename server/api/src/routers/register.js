@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import fetch from 'node-fetch'
+import { generate } from '../utils/token'
 
 const router = Router()
 const BASE_URL = 'http://mockly-profile-service:3005/users'
