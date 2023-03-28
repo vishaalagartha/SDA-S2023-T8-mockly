@@ -4,6 +4,7 @@ import LandingPage from './pages/Landing'
 import ProtectedRoute from './components/ProtectedRoute'
 import DashboardPage from './pages/Dashboard'
 import ProfilePage from './pages/Profile'
+import SchedulePage from './pages/SchedulePage'
 
 const App = () => {
   return (
@@ -25,6 +26,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+      <Route
+          path='/schedule'
+          element={
+              <ProtectedRoute>
+                  <SchedulePage />
+              </ProtectedRoute>
+          }
+      />
         <Route path='/login' element={<LandingPage />} />
       </Routes>
     </Router>

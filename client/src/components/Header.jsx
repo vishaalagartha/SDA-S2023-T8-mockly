@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 const items = [
   { key: '1', label: 'Profile' },
   { key: '2', label: 'Interview History' },
+  { key: '3', label: 'Meeting Schedule' },
 ]
 
 const Header = ({ children }) => {
@@ -17,6 +18,9 @@ const Header = ({ children }) => {
         break
       case '2':
         navigate('/feedback')
+        break
+      case '3':
+        navigate('/schedule')
         break
     }
   }
