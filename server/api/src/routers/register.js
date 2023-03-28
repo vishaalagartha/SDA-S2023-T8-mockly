@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
     const responseJSON = await response.json()
     if (response.status == 201) {
       // new user created
-      const token = generate(responseJSON.user.id)
+      const token = generate(responseJSON.user._id)
       res.status(response.status).json({ token })
     } else {
       /**
