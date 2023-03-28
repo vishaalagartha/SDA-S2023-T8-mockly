@@ -12,7 +12,7 @@ export default Router()
       const matches = await resp.json()
       response.json(matches)
     } catch (e) {
-      response.status(500)
+      response.status(500).send({ message: 'Internal server error '})
     }
     
   })
@@ -24,7 +24,7 @@ export default Router()
       const match = await resp.json()
       response.json(match)
     } catch (e) {
-      response.status(500)
+      response.status(500).send({ message: 'Internal server error '})
     }
     
   })
