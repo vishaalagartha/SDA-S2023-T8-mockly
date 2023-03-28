@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addSchedule, listSchedules } from "../store/scheduleSlice";
-import { Button, Divider, Input } from 'antd'
+import { Button, Divider, Input, Calendar } from 'antd'
 
 const dummySchedules = [
     {
@@ -24,7 +24,7 @@ const SchedulePage = () => {
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
-    const [meetLink, setMeetLink] = useState("");
+    const [meetLink] = useState("");
 
     const dispatch = useDispatch();
     let schedules = useSelector(listSchedules);
@@ -42,17 +42,18 @@ const SchedulePage = () => {
         setTime(event.target.value);
     };
 
-    const handleMeetLinkChange = (event) => {
-        setMeetLink(event.target.value);
-    };
-
     const handleAddSchedule = (event) => {
         event.preventDefault();
         dispatch(addSchedule({ title, date, time, meetLink }));
         setTitle("");
         setDate("");
         setTime("");
-        setMeetLink("");
+    };
+
+    const wrapperStyle = {
+        width: 1000,
+        border: `1px solid`,
+        borderRadius: `5px`,
     };
 
     return (
@@ -66,9 +67,13 @@ const SchedulePage = () => {
                         <a href={schedule.meetLink} target="_blank" rel="noopener noreferrer">
                             Join
                         </a>
+                        <Button value="small">Cancel</Button>
                     </li>
                 ))}
             </ul>
+            <div style={wrapperStyle}>
+                <Calendar fullscreen={false} />
+            </div>
             <Divider />
             <form onSubmit={handleAddSchedule}>
                 <label>
@@ -86,10 +91,6 @@ const SchedulePage = () => {
                     <Input type="time" value={time} onChange={handleTimeChange} />
                 </label>
                 <br />
-                <label>
-                    Meet Link:
-                    <Input type="text" value={meetLink} onChange={handleMeetLinkChange} />
-                </label>
                 <br />
                 <Button type="primary">Add Schedule</Button>
             </form>
