@@ -27,7 +27,7 @@ app.post('/matches', async (request, response) => {
     response.json(matches)
   } catch (e) {
     console.error(e)
-    response.status(500)
+    response.status(500).send({ message: 'Internal server error.'})
   }
 })
 
@@ -40,11 +40,11 @@ app.post('/interviews', async (request, response) => {
     response.json(interview)
   } catch (e) {
     console.error(e)
-    response.status(500)
+    response.status(500).send({ message: 'Internal server error.'})
   }
 })
 
-app.delete('/interviews', (req, res) => {
+app.delete('/interviews/:interview_id', (req, res) => {
   res.json({ message: 'DELETE interviews response' })
 })
 
