@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  getUsers,
   getUserById,
   createUser,
   validateUserCredentials,
@@ -22,6 +23,10 @@ import {
 } from '../controllers/userController'
 
 const router = Router()
+
+// GET /users
+// Get all users
+router.get('/', getUsers)
 
 // GET /users
 // Get user by ID

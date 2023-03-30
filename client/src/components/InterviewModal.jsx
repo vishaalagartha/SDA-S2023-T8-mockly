@@ -51,7 +51,7 @@ const InterviewModal = ({ open, setOpen }) => {
   useEffect(() => {
     form.resetFields()
     setTimes([])
-    setStep(4)
+    setStep(0)
   }, [open])
 
   const handleStepBack = () => {
@@ -196,7 +196,16 @@ const InterviewModal = ({ open, setOpen }) => {
               </Row>
               <Row justify="center">
                 <Form.Item name="date" validateStatus={timeStatus} help={timeStatus === 'error' ? 'Please select at least 1 time slot.' : ''}>
-                  <DatePicker showTime={{ use12Hours: true }} format="MM/DD/YY h A" onOk={addTimeSlot} />
+                  <DatePicker 
+                    showTime={{ use12Hours: true }} 
+                    format="MM/DD/YY h A" 
+                    onOk={addTimeSlot} 
+                    disabledDate={current => {
+                      const inPast = current && current < dayjs().endOf('day')
+                      const afterThreeWeeks = current && current && current > dayjs().endOf('day').add(3, 'week')
+                      return inPast || afterThreeWeeks
+                    }}
+                  />
                 </Form.Item>
               </Row>
               <Row>

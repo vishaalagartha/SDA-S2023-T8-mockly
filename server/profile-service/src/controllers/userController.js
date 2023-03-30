@@ -1,7 +1,20 @@
 import { assign, findIndex, isEmpty } from 'lodash'
 import User from '../models/user'
 
-export const getUserById = (req, res) => {
+export const getUsers = async (req, res) => {
+  try {
+    const allUsers = await User.find()
+    return res.status(200).json(allUsers)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({
+      message: 'Error retrieving user',
+      error: error,
+    })
+  }
+}
+
+export const getUserById = async (req, res) => {
   const userId = req.params.userId
 
   User.findById(userId)
