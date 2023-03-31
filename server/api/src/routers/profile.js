@@ -13,12 +13,6 @@ router.get('/:userId', async (request, response) => {
   try {
     const filterFieldString = request.query.fields
     const userId = request.params.userId
-    const authHeader = request.header('authorization')
-    const token = authHeader.split(' ')[1]
-    const decodedToken = validate(token)
-    if (decodedToken.uid !== userId) {
-      return response.status(401).json({ message: 'Unauthorized.' })
-    }
     let requestURL = `${BASE_URL}/${userId}`
     if (filterFieldString && filterFieldString.length) {
       requestURL += '?fields=' + filterFieldString
