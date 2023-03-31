@@ -7,15 +7,19 @@ import { headers } from '../utils/constants'
 const router = Router()
 const BASE_URL = 'http://mockly-profile-service:3005/users'
 
-// GET /users
-// Get user by ID
-router.get('/', async (request, response) => {
+// GET /users/:userId
+// Get user profile by ID
+router.get('/:userId', async (request, response) => {
   try {
     const filterFieldString = request.query.fields
+    const userId = request.params.userId
     const authHeader = request.header('authorization')
     const token = authHeader.split(' ')[1]
     const decodedToken = validate(token)
-    let requestURL = `${BASE_URL}/${decodedToken.uid}`
+    if (decodedToken.uid !== userId) {
+      return response.status(401).json({ message: 'Unauthorized.' })
+    }
+    let requestURL = `${BASE_URL}/${userId}`
     if (filterFieldString && filterFieldString.length) {
       requestURL += '?fields=' + filterFieldString
     }
@@ -317,6 +321,7 @@ router.put(
   }
 )
 
+// Remove this route
 // GET /users/interviewer
 // Retrieves a list of interviewers and their associated skills
 // Returns an array of objects, each containing the interviewer's name and their skills

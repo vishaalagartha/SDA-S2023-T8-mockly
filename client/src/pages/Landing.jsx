@@ -17,8 +17,9 @@ const Landing = () => {
       })
       console.log('Login: ', res)
       if (!res.status) {
-        const { token } = res
+        const { token, userId } = res
         localStorage.setItem('token', token)
+        localStorage.setItem('userId', userId)
         navigate('/')
       }
     } catch (error) {
@@ -35,8 +36,9 @@ const Landing = () => {
       })
       console.log('Register: ', res)
       if (!res.status) {
-        const { token } = res
+        const { token, userId } = res
         localStorage.setItem('token', token)
+        localStorage.setItem('userId', userId)
         navigate('/')
       }
     } catch (error) {

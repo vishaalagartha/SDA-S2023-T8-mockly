@@ -19,9 +19,10 @@ const ProfilePage = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    const userId = localStorage.getItem('userId')
     const getUserDetails = async () => {
       try {
-        const response = await fetchUserAPI()
+        const response = await fetchUserAPI(userId)
         console.log('Profile Page', response)
         dispatch(setUser(response))
       } catch (error) {
