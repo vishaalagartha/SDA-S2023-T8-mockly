@@ -18,11 +18,10 @@ const initialState = {
   experience: [],
   projects: [],
   courses: [],
-  interviewerDetails: {
-    type: '',
-    fields: [],
-    timeSlots: [],
-  },
+  // interviewer details
+  type: '',
+  fields: [],
+  time: [],
 }
 
 const userSlice = createSlice({
@@ -93,7 +92,7 @@ const userSlice = createSlice({
       state.courses = reject(state.courses, { _id: action.payload.courseId })
     },
     setInterviewerDetails: (state, action) => {
-      return { ...state, interviewerDetails: action.payload }
+      return { ...state, ...action.payload }
     },
   },
 })

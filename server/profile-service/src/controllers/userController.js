@@ -699,3 +699,40 @@ export const updateSummary = async (req, res) => {
       .json({ message: 'Error updating summary', error: error })
   }
 }
+
+export const updateInterviewerDetails = async (req, res) => {
+  const { userId, type, fields, time } = req.body
+  if (!userId || !type || !fields || !time) {
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'The request body is missing one or more required fields.',
+    })
+  }
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        type: type,
+        fields: fields,
+        time: time,
+      },
+      { new: true }
+    )
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'User not found.',
+      })
+    }
+
+    return res.status(200).json(updatedUser)
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'An error occurred while updating the interviewer details.',
+    })
+  }
+}

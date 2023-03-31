@@ -291,6 +291,27 @@ router.put('/summary', setUserIdFromToken, async (request, response) => {
   }
 })
 
+// PUT /users/interviewer-details
+// Update the interviewer details card for a user
+router.put(
+  '/interviewer-details',
+  setUserIdFromToken,
+  async (request, response) => {
+    const options = {
+      method: 'PUT',
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/interviewer-details`, options)
+      const respJSON = await resp.json()
+      response.json(respJSON)
+    } catch (e) {
+      response.status(500)
+    }
+  }
+)
+
 // GET /users/interviewer
 // Retrieves a list of interviewers and their associated skills
 // Returns an array of objects, each containing the interviewer's name and their skills

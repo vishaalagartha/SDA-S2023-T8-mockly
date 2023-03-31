@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { getUserInterviewerDetails } from '../../store/userSelector'
 import { setInterviewerDetails } from '../../store/userSlice'
-// import { updateInterviewerDetailsAPI } from '../../api/userProfile'
+import { updateInterviewerDetailsAPI } from '../../api/userProfile'
 import { find } from 'lodash'
 import dayjs from 'dayjs'
 
@@ -42,19 +42,22 @@ const InterviewerDetailsCard = () => {
 
   useEffect(() => {
     console.log('USE EFFECT', interviewer)
+    initiateValues()
+  }, [interviewer, form])
+
+  const initiateValues = () => {
     setTimeSlots(
-      interviewer.timeSlots.map((time) =>
-        dayjs.unix(time).format('MM/DD/YY h A')
-      )
+      interviewer.time.map((time) => dayjs.unix(time).format('MM/DD/YY h A'))
     )
     form.setFieldsValue({
       type: interviewer.type,
       fields: interviewer.fields,
     })
-  }, [interviewer, form])
+  }
 
   const handleEditClick = () => {
     setEditMode((prevEditMode) => !prevEditMode)
+    initiateValues()
   }
 
   const handleAddTimeSlot = (dateTime) => {
@@ -77,12 +80,10 @@ const InterviewerDetailsCard = () => {
       const formValues = await form.validateFields()
       const formData = {
         ...formValues,
-        timeSlots: timeSlots.map((slot) => dayjs(slot, 'MM/DD/YY h A').unix()),
+        time: timeSlots.map((slot) => dayjs(slot, 'MM/DD/YY h A').unix()),
       }
-      console.log(formData)
-      console.log(timeSlots)
-      // const res = await updateInterviewerDetailsAPI({ ...formData })
-      // console.log('Interviewer Details updated: ', res)
+      const res = await updateInterviewerDetailsAPI({ ...formData })
+      console.log('Interviewer Details updated: ', res)
       dispatch(setInterviewerDetails(formData))
     } catch (e) {
       console.log(e)
@@ -92,6 +93,7 @@ const InterviewerDetailsCard = () => {
   }
 
   const handleCancelClick = () => {
+    initiateValues()
     setEditMode(false)
   }
 
@@ -112,7 +114,7 @@ const InterviewerDetailsCard = () => {
         className='user-time-slot-tag'
         closable={isClosable}
         key={index}
-        onClose={isClosable ? () => handleRemoveTimeSlot(index) : null}
+        onClose={isClosable ? () => handleRemoveTimeSlot(slot) : null}
       >
         {slot}
       </Tag>
