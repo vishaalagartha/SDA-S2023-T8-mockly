@@ -8,7 +8,7 @@ export const updatePersonalIdentityAPI = async (payload) =>
 
 // fetch a user's profile by id (GET /api/users/:userId)
 export const fetchUserAPI = async (userId) =>
-  request(`users/${userId}`, {
+  request(`users/${userId}?fields=password`, {
     method: 'GET',
   })
 

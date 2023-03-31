@@ -1,10 +1,14 @@
 import { assign, findIndex, isEmpty } from 'lodash'
 import User from '../models/user'
 
+/**
+ * Controller for GET /users, GET /users?fields=firstName,lastName,type,fields,time
+ * Returns list of users (by default all details except password else the fields requested in the request query)
+ */
 export const getUsers = async (req, res) => {
   try {
     const fields = req.query.fields ? req.query.fields.split(',').join(' ') : ''
-    const allUsers = await User.find().select(fields)
+    const allUsers = await User.find().select(`${fields} -password`)
     return res.status(200).json(allUsers)
   } catch (error) {
     console.error(error)
@@ -15,17 +19,20 @@ export const getUsers = async (req, res) => {
   }
 }
 
+/**
+ * Controller for GET /users/:userId, GET /users/userId?fields=firstName,lastName,type,fields,time
+ * Returns a user by ID (by default all details except password else the fields requested in the request query)
+ */
 export const getUserById = async (req, res) => {
   const userId = req.params.userId
   const fields = req.query.fields ? req.query.fields.split(',').join(' ') : ''
-  User.findById(userId, fields)
+  User.findById(userId, `${fields} -password`)
     .then((user) => {
       if (!user) {
         return res.status(404).json({
           message: `User with ID ${userId} not found`,
         })
       }
-      console.log(JSON.stringify(user))
       return res.status(200).json(user)
     })
     .catch((error) => {
