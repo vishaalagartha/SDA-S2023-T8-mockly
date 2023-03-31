@@ -16,7 +16,7 @@ router.get('/', async (request, response) => {
     const token = authHeader.split(' ')[1]
     const decodedToken = validate(token)
     let requestURL = `${BASE_URL}/${decodedToken.uid}`
-    if (filterFieldString.length) {
+    if (filterFieldString && filterFieldString.length) {
       requestURL += '?fields=' + filterFieldString
     }
     const resp = await fetch(requestURL, {

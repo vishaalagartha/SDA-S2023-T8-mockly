@@ -7,7 +7,7 @@ export const updatePersonalIdentityAPI = async (payload) =>
   })
 
 export const fetchUserAPI = async () =>
-  request('users?fields=andrewId,type,fields,time', {
+  request('users', {
     method: 'GET',
   })
 

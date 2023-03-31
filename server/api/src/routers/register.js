@@ -23,7 +23,8 @@ router.post('/', async (req, res) => {
     if (response.status == 201) {
       // new user created
       const token = generate(responseJSON.user._id)
-      res.status(response.status).json({ token })
+      const responseJSON = await response.json()
+      res.status(response.status).json({ token, userId: responseJSON.user._id })
     } else {
       /**
        * 400 - Missing required fields
