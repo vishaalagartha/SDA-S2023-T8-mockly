@@ -3,7 +3,8 @@ import User from '../models/user'
 
 export const getUsers = async (req, res) => {
   try {
-    const allUsers = await User.find()
+    const fields = req.query.fields ? req.query.fields.split(',').join(' ') : ''
+    const allUsers = await User.find().select(fields)
     return res.status(200).json(allUsers)
   } catch (error) {
     console.error(error)
@@ -16,14 +17,15 @@ export const getUsers = async (req, res) => {
 
 export const getUserById = async (req, res) => {
   const userId = req.params.userId
-
-  User.findById(userId)
+  const fields = req.query.fields ? req.query.fields.split(',').join(' ') : ''
+  User.findById(userId, fields)
     .then((user) => {
       if (!user) {
         return res.status(404).json({
           message: `User with ID ${userId} not found`,
         })
       }
+      console.log(JSON.stringify(user))
       return res.status(200).json(user)
     })
     .catch((error) => {

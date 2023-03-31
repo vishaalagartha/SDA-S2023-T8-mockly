@@ -53,10 +53,6 @@ const userSchema = new Schema({
   time: [{ type: Number }],
 })
 
-userSchema.statics.findById = function (id) {
-  return this.findOne({ _id: id }).exec()
-}
-
 const User = mongoose.model('User', userSchema)
 
 export default User

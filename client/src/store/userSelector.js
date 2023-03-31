@@ -26,7 +26,6 @@ export const getUserProjects = createSelector(selectUser, (user) => {
 })
 export const getUserInterviewerDetails = createSelector(selectUser, (user) => {
   const { type, fields, time } = user
-  console.log(type, fields, time)
   return {
     interviewerDetails: {
       type,

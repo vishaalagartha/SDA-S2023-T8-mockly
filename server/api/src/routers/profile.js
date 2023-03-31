@@ -11,16 +11,21 @@ const BASE_URL = 'http://mockly-profile-service:3005/users'
 // Get user by ID
 router.get('/', async (request, response) => {
   try {
+    const filterFieldString = request.query.fields
     const authHeader = request.header('authorization')
     const token = authHeader.split(' ')[1]
     const decodedToken = validate(token)
-    const resp = await fetch(`${BASE_URL}/${decodedToken.uid}`, {
+    let requestURL = `${BASE_URL}/${decodedToken.uid}`
+    if (filterFieldString.length) {
+      requestURL += '?fields=' + filterFieldString
+    }
+    const resp = await fetch(requestURL, {
       headers,
     })
     const user = await resp.json()
     response.json(user)
   } catch (e) {
-    response.status(500).send('Internal Server Error')
+    response.status(500).json({ message: 'Internal Server Error' })
   }
 })
 
