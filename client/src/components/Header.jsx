@@ -1,5 +1,9 @@
-import { Layout, Menu } from 'antd'
+/* eslint-disable */
+import { Layout, Menu, Typography, Image } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { LinkContainer } from 'react-router-bootstrap'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../store/userSlice'
 
 const items = [
   { key: '1', label: 'Profile' },
@@ -8,6 +12,7 @@ const items = [
 
 const Header = ({ children }) => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleClick = (e) => {
     const { key } = e
@@ -21,21 +26,34 @@ const Header = ({ children }) => {
     }
   }
 
+  const handleLogout = () => {
+    dispatch(setUser())
+    navigate('/login')
+  }
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Layout.Header
-        style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%' }}
-      >
-        <Menu
-          theme='dark'
-          mode='horizontal'
-          items={items}
-          onClick={handleClick}
-        />
-      </Layout.Header>
-      <Layout.Content style={{ margin: '24px 16px 0' }}>
-        {children}
-      </Layout.Content>
+      <Layout.Sider collapsible>
+        <Menu theme="dark" mode="inline" items={items} onClick={handleClick} />
+      </Layout.Sider>
+      <Layout className="site-layout">
+        <Layout.Header
+          style={{
+            paddingLeft: 10,
+            backgroundColor: 'white',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+          <LinkContainer to="/dashboard" style={{ cursor: 'pointer', paddingLeft: 10 }}>
+            <Image src={null} preview={false} width={300} />
+          </LinkContainer>
+          <LinkContainer to="/" onClick={handleLogout}>
+            <Typography.Text role="button">Logout</Typography.Text>
+          </LinkContainer>
+        </Layout.Header>
+        <Layout.Content>{children}</Layout.Content>
+      </Layout>
     </Layout>
   )
 }

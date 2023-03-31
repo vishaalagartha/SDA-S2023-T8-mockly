@@ -116,6 +116,7 @@ const InterviewModal = ({ open, setOpen }) => {
 
   return (
     <Modal 
+      forceRender
       open={open}
       onCancel={() => setOpen(false)}
       onOk={() => setOpen(false)}

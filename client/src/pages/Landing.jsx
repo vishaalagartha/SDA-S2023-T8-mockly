@@ -15,9 +15,9 @@ const Landing = () => {
         method: 'POST',
         body: JSON.stringify(values),
       })
-      console.log('Login: ', res)
       if (!res.status) {
         const { token, userId } = res
+        console.log(res)
         localStorage.setItem('token', token)
         localStorage.setItem('userId', userId)
         navigate('/')
@@ -34,7 +34,6 @@ const Landing = () => {
         method: 'POST',
         body: JSON.stringify(values),
       })
-      console.log('Register: ', res)
       if (!res.status) {
         const { token, userId } = res
         localStorage.setItem('token', token)

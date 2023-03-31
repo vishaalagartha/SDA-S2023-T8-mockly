@@ -3,10 +3,9 @@ import Header from './Header'
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token')
-  // const uid = localStorage.getItem('uid')
   const navigate = useNavigate()
   if (!token) {
-    navigate('/landing')
+    navigate('/login')
   }
 
   return <Header>{children}</Header>
