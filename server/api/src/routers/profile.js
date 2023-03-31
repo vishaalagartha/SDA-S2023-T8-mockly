@@ -3,6 +3,7 @@ import fetch from 'node-fetch'
 import { validate } from '../utils/token'
 import { setUserIdFromToken } from '../middlewares/setUserIdFromToken'
 import { headers } from '../utils/constants'
+import { verifyUserIdParam } from '../middlewares/verifyUserIdParam'
 
 const router = Router()
 const BASE_URL = 'http://mockly-profile-service:3005/users'
@@ -297,16 +298,20 @@ router.put('/summary', setUserIdFromToken, async (request, response) => {
 // PUT /users/interviewer-details
 // Update the interviewer details card for a user
 router.put(
-  '/interviewer-details',
-  setUserIdFromToken,
+  '/:userId/interviewer-details',
+  verifyUserIdParam,
   async (request, response) => {
+    const userId = request.params.userId
     const options = {
       method: 'PUT',
       body: JSON.stringify(request.body),
       headers,
     }
     try {
-      const resp = await fetch(`${BASE_URL}/interviewer-details`, options)
+      const resp = await fetch(
+        `${BASE_URL}/${userId}/interviewer-details`,
+        options
+      )
       const respJSON = await resp.json()
       response.json(respJSON)
     } catch (e) {

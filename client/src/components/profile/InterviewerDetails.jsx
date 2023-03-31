@@ -76,13 +76,14 @@ const InterviewerDetailsCard = () => {
 
   const handleSaveClick = async () => {
     setLoading(true)
+    const userId = localStorage.getItem('userId')
     try {
       const formValues = await form.validateFields()
       const formData = {
         ...formValues,
         time: timeSlots.map((slot) => dayjs(slot, 'MM/DD/YY h A').unix()),
       }
-      const res = await updateInterviewerDetailsAPI({ ...formData })
+      const res = await updateInterviewerDetailsAPI(userId, { ...formData })
       console.log('Interviewer Details updated: ', res)
       dispatch(setInterviewerDetails(formData))
     } catch (e) {

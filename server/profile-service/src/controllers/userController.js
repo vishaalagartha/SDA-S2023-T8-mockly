@@ -710,7 +710,8 @@ export const updateSummary = async (req, res) => {
 }
 
 export const updateInterviewerDetails = async (req, res) => {
-  const { userId, type, fields, time } = req.body
+  const userId = req.params.userId
+  const { type, fields, time } = req.body
   if (!userId || !type || !fields || !time) {
     return res.status(400).json({
       error: 'Bad Request',

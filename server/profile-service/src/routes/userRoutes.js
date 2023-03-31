@@ -105,9 +105,9 @@ router.delete('/experiences', deleteExperience)
 // Update the summary field for a user
 router.put('/summary', updateSummary)
 
-// PUT /users/interviewer-details
+// PUT /users/:userId/interviewer-details
 // Update the interviewer card for a user
-router.put('/interviewer-details', updateInterviewerDetails)
+router.put('/:userId/interviewer-details', updateInterviewerDetails)
 
 // GET /users/interviewer
 // Retrieves a list of interviewers and their associated skills

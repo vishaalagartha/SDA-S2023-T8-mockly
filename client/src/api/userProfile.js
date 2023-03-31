@@ -48,8 +48,8 @@ export const updateSummaryAPI = async (payload) =>
     body: JSON.stringify(payload),
   })
 
-export const updateInterviewerDetailsAPI = async (payload) =>
-  request('users/interviewer-details', {
+export const updateInterviewerDetailsAPI = async (userId, payload) =>
+  request(`users/${userId}/interviewer-details`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   })
