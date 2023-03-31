@@ -48,6 +48,11 @@ const userSchema = new Schema({
       endDate: Date,
     },
   ],
+  interviewerDetails: {
+    type: String,
+    fields: [{ type: String }],
+    timeSlots: [{ type: Date }],
+  },
 })
 
 userSchema.statics.findById = function (id) {

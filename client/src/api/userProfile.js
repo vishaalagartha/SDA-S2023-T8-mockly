@@ -46,3 +46,9 @@ export const updateSummaryAPI = async (payload) =>
     method: 'PUT',
     body: JSON.stringify(payload),
   })
+
+export const updateInterviewerDetailsAPI = async (payload) =>
+  request('users/interviewer-details', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })

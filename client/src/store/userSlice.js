@@ -18,6 +18,11 @@ const initialState = {
   experience: [],
   projects: [],
   courses: [],
+  interviewerDetails: {
+    type: '',
+    fields: [],
+    timeSlots: [],
+  },
 }
 
 const userSlice = createSlice({
@@ -87,6 +92,9 @@ const userSlice = createSlice({
     removeCourse: (state, action) => {
       state.courses = reject(state.courses, { _id: action.payload.courseId })
     },
+    setInterviewerDetails: (state, action) => {
+      return { ...state, interviewerDetails: action.payload }
+    },
   },
 })
 
@@ -105,6 +113,7 @@ export const {
   addCourse,
   removeCourse,
   setUser,
+  setInterviewerDetails,
 } = userSlice.actions
 export const userSelector = (state) => state.user
 export default userSlice.reducer

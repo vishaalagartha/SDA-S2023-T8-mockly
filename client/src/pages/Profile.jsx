@@ -9,6 +9,7 @@ import SummaryCard from '../components/profile/Summary'
 import EducationCard from '../components/profile/Education'
 import ExperienceCard from '../components/profile/Experience'
 import ProjectsCard from '../components/profile/Projects'
+import InterviewerDetailsCard from '../components/profile/InterviewerDetails'
 import { fetchUserAPI } from '../api/userProfile'
 import { setUser } from '../store/userSlice'
 
@@ -41,6 +42,7 @@ const ProfilePage = () => {
         </Col>
         <Col xs={24} sm={24} md={14} lg={14} xl={14}>
           <SummaryCard />
+          <InterviewerDetailsCard />
           <EducationCard />
           <ExperienceCard />
           <ProjectsCard />

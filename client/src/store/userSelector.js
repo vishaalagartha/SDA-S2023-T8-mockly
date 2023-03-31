@@ -24,3 +24,13 @@ export const getUserExperience = createSelector(selectUser, (user) => {
 export const getUserProjects = createSelector(selectUser, (user) => {
   return { projects: user.projects }
 })
+export const getUserInterviewerDetails = createSelector(selectUser, (user) => {
+  const { type, fields, timeSlots } = user.interviewerDetails
+  return {
+    interviewerDetails: {
+      type,
+      fields,
+      timeSlots,
+    },
+  }
+})
