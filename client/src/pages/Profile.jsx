@@ -18,7 +18,7 @@ import '../styles/profile.css'
 const ProfilePage = () => {
   const dispatch = useDispatch()
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
+    const userId = localStorage.getItem('id')
     const getUserDetails = async () => {
       try {
         const response = await fetchUserAPI(userId)

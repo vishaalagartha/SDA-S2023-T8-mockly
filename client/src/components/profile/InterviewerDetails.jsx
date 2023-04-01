@@ -76,7 +76,7 @@ const InterviewerDetailsCard = () => {
 
   const handleSaveClick = async () => {
     setLoading(true)
-    const userId = localStorage.getItem('userId')
+    const userId = localStorage.getItem('id')
     try {
       const formValues = await form.validateFields()
       const formData = {

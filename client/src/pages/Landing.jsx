@@ -22,7 +22,7 @@ const Landing = () => {
         const { token, ...fieldsToStore } = res
         dispatch(setUser(fieldsToStore))
         localStorage.setItem('token', token)
-        localStorage.setItem('id', fieldsToStore.id)
+        localStorage.setItem('id', fieldsToStore._id)
         navigate('/')
       }
     } catch (error) {
@@ -41,7 +41,7 @@ const Landing = () => {
         const { token, ...fieldsToStore } = res
         dispatch(setUser(fieldsToStore))
         localStorage.setItem('token', token)
-        localStorage.setItem('id', fieldsToStore.id)
+        localStorage.setItem('id', fieldsToStore._id)
         navigate('/')
       }
     } catch (error) {

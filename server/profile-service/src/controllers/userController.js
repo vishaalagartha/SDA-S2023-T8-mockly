@@ -90,12 +90,11 @@ export const validateUserCredentials = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-    if (user.password !== password) {
+    if (!user.comparePassword(password)) {
       return res.status(401).json({ message: 'Invalid credentials' })
     }
     // eslint-disable-next-line
     const { password: _, ...fieldsToReturn } = user.toObject()
-    console.log(fieldsToReturn)
     return res.status(200).json(fieldsToReturn)
   } catch (error) {
     console.error(error)

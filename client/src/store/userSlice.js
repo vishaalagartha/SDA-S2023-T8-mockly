@@ -34,6 +34,9 @@ const userSlice = createSlice({
         ...action.payload,
       }
     },
+    resetUser: () => {
+      return { ...initialState }
+    },
     setIdentity: (state, action) => {
       const { firstName, lastName, organization, position } = action.payload
       return {
@@ -113,6 +116,7 @@ export const {
   removeCourse,
   setUser,
   setInterviewerDetails,
+  resetUser,
 } = userSlice.actions
 export const userSelector = (state) => state.user
 export default userSlice.reducer
