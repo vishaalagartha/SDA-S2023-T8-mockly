@@ -214,7 +214,7 @@ router.post('/projects', async (req, res) => {
     headers: { 'Content-Type': 'application/json' },
   }
   try {
-    const resp = await fetch(`${baseUrl}/projects`, options)
+    const resp = await fetch(`${BASE_URL}/projects`, options)
     const project = await resp.json()
     res.json(project)
   } catch (e) {
@@ -231,7 +231,7 @@ router.put('/projects', async (req, res) => {
     headers: { 'Content-Type': 'application/json' },
   }
   try {
-    const resp = await fetch(`${baseUrl}/projects`, options)
+    const resp = await fetch(`${BASE_URL}/projects`, options)
     const project = await resp.json()
     res.json(project)
   } catch (e) {
@@ -245,7 +245,7 @@ router.delete('/projects', async (request, response) => {
   const { body } = request
   const options = { method: 'DELETE', body: JSON.stringify(body), headers }
   try {
-    const resp = await fetch(`${baseUrl}/projects`, options)
+    const resp = await fetch(`${BASE_URL}/projects`, options)
     const project = await resp.json()
     response.json(project)
   } catch (e) {
@@ -259,7 +259,7 @@ router.post('/experiences', async (request, response) => {
   const { body } = request
   const options = { method: 'POST', body: JSON.stringify(body), headers }
   try {
-    const resp = await fetch(`${baseUrl}/experiences`, options)
+    const resp = await fetch(`${BASE_URL}/experiences`, options)
     const experience = await resp.json()
     response.json(experience)
   } catch (e) {
@@ -273,7 +273,7 @@ router.put('/experiences', async (request, response) => {
   const { body } = request
   const options = { method: 'PUT', body: JSON.stringify(body), headers }
   try {
-    const resp = await fetch(`${baseUrl}/experiences`, options)
+    const resp = await fetch(`${BASE_URL}/experiences`, options)
     const experience = await resp.json()
     response.json(experience)
   } catch (e) {
@@ -287,7 +287,7 @@ router.delete('/experiences', async (request, response) => {
   const { body } = request
   const options = { method: 'DELETE', body: JSON.stringify(body), headers }
   try {
-    const resp = await fetch(`${baseUrl}/experiences`, options)
+    const resp = await fetch(`${BASE_URL}/experiences`, options)
     const experience = await resp.json()
     response.json(experience)
   } catch (e) {
@@ -295,22 +295,27 @@ router.delete('/experiences', async (request, response) => {
   }
 })
 
-// PUT /users/summary
+// PUT /users/:userId/summary
 // Update the summary field for a user
-router.put('/summary', setUserIdFromToken, async (request, response) => {
-  const options = {
-    method: 'PUT',
-    body: JSON.stringify(request.body),
-    headers,
+router.put(
+  '/:userId/summary',
+  setUserIdFromToken,
+  async (request, response) => {
+    const userId = request.params.userId
+    const options = {
+      method: 'PUT',
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/${userId}/summary`, options)
+      const respJSON = await resp.json()
+      response.json(respJSON)
+    } catch (e) {
+      response.status(500)
+    }
   }
-  try {
-    const resp = await fetch(`${BASE_URL}/summary`, options)
-    const respJSON = await resp.json()
-    response.json(respJSON)
-  } catch (e) {
-    response.status(500)
-  }
-})
+)
 
 // PUT /users/interviewer-details
 // Update the interviewer details card for a user
@@ -342,10 +347,10 @@ router.put(
 // Retrieves a list of interviewers and their associated skills
 // Returns an array of objects, each containing the interviewer's name and their skills
 router.get('/interviewer', async (req, res) => {
-  const baseUrl = `${BASE_URL}/interviewer`
+  const BASE_URL = `${BASE_URL}/interviewer`
   const options = { method: 'GET', headers }
   try {
-    const resp = await fetch(baseUrl, options)
+    const resp = await fetch(BASE_URL, options)
     const data = await resp.json()
     res.json(data)
   } catch (e) {

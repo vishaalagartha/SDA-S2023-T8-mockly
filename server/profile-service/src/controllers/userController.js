@@ -713,8 +713,13 @@ export const deleteExperience = async (req, res) => {
   }
 }
 
+/**
+ * Controller for PUT /users/:userId/summary
+ * Update summary of a particular user
+ */
 export const updateSummary = async (req, res) => {
-  const { userId, summary } = req.body
+  const userId = req.params.userId
+  const { summary } = req.body
   // Check if request body contains required fields
   if (!userId) {
     return res.status(400).json({
@@ -722,18 +727,22 @@ export const updateSummary = async (req, res) => {
     })
   }
   try {
+    // Update the user's summary in the database
     const user = await User.findByIdAndUpdate(
       userId,
       { summary },
       { new: true }
     )
+    // If the user is not found, return a 404 error response
     if (!user) {
       return res.status(404).json({
         message: `User with ID ${userId} not found`,
       })
     }
+    // If the update is successful, return a 200 response with the updated summary
     return res.status(200).json({ summary: user.summary })
   } catch (error) {
+    // Return a 500 error response with an appropriate message
     console.error(error)
     return res
       .status(500)

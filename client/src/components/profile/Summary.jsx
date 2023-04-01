@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Typography, Form, Input, Button } from 'antd'
+import { useForm } from 'antd/es/form/Form'
 import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserSummary } from '../../store/userSelector'
@@ -10,28 +11,43 @@ const { Text } = Typography
 
 const SummaryCard = () => {
   const dispatch = useDispatch()
+  const [form] = useForm()
 
   const label =
     'What are you passionate about? What are you looking for on Mockly?'
+
+  // set editMode to true for edit mode else false for display mode
   const [editMode, setEditMode] = useState(false)
+  // set loading to true to show loading indicator else false to hide the indicator
   const [loading, setLoading] = useState(false)
 
+  // Get the user's summary from the Redux store
   const userSummary = useSelector(getUserSummary)
 
-  const [formData, setFormData] = useState({
-    summary: userSummary.summary,
-  })
-
-  const handleEditClick = () => {
-    setFormData({ ...userSummary })
-    setEditMode((prevEditMode) => !prevEditMode)
+  // Initialize form values with the current user summary
+  const initiateValues = () => {
+    form.setFieldsValue({
+      summary: userSummary.summary,
+    })
   }
 
+  // Toggle the edit mode and initialize form values when the edit button is clicked
+  const handleEditClick = () => {
+    setEditMode((prevEditMode) => !prevEditMode)
+    initiateValues()
+  }
+
+  // Handle saving the form by updating the summary through API and updating the Redux store
   const handleSaveClick = async () => {
     setLoading(true)
     try {
-      const res = await updateSummaryAPI({ ...formData })
+      const userId = localStorage.getItem('id')
+      // Validate and get the form values
+      const formValues = await form.validateFields()
+      // Call the API to update the summary with the new form values
+      const res = await updateSummaryAPI(userId, { ...formValues })
       console.log('Summary updated', res)
+      // If the update is successful, update the summary in the Redux store
       if (!res.status) {
         dispatch(setSummary(res))
       }
@@ -43,15 +59,8 @@ const SummaryCard = () => {
   }
 
   const handleCancelClick = () => {
-    setFormData({ ...userSummary })
+    initiateValues()
     setEditMode(false)
-  }
-
-  const handleSummaryChange = (e) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [e.target.name]: e.target.value,
-    }))
   }
 
   return (
@@ -66,12 +75,10 @@ const SummaryCard = () => {
       }
     >
       {editMode ? (
-        <Form layout='vertical' initialValues={formData}>
+        <Form form={form} layout='vertical' onFinish={handleSaveClick}>
           <Form.Item name='summary' label={label}>
             <Input.TextArea
               name='summary'
-              value={formData.summary}
-              onChange={handleSummaryChange}
               autoSize={{ minRows: 4, maxRows: 8 }}
             />
           </Form.Item>
@@ -89,7 +96,7 @@ const SummaryCard = () => {
                 className='user-right-card--save-btn'
                 type='primary'
                 shape='round'
-                onClick={handleSaveClick}
+                htmlType='submit'
               >
                 Save
               </Button>

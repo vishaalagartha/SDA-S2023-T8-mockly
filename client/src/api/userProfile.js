@@ -46,8 +46,9 @@ export const deleteCourseAPI = async (userId, payload) =>
     body: JSON.stringify(payload),
   })
 
-export const updateSummaryAPI = async (payload) =>
-  request('users/summary', {
+// update summary of a particular user (UPDATE /api/users/:userId/summary)
+export const updateSummaryAPI = async (userId, payload) =>
+  request(`users/${userId}/summary`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   })

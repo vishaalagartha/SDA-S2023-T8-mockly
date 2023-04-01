@@ -101,9 +101,9 @@ router.put('/experiences', updateExperience)
 // Delete an existing experience entry for a user
 router.delete('/experiences', deleteExperience)
 
-// PUT /users/summary
+// PUT /users/:userId/summary
 // Update the summary field for a user
-router.put('/summary', updateSummary)
+router.put('/:userId/summary', updateSummary)
 
 // PUT /users/:userId/interviewer-details
 // Update the interviewer card for a user
