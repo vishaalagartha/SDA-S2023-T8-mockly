@@ -3,10 +3,13 @@ import { Card, Row, Form, Space, Typography, Input, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useNavigate } from 'react-router-dom'
 import request from '../utils/request'
+import { setUser } from '../store/userSlice'
+import { useDispatch } from 'react-redux'
 
 const Landing = () => {
   const [form] = useForm()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleLogin = async () => {
     try {
@@ -16,10 +19,10 @@ const Landing = () => {
         body: JSON.stringify(values),
       })
       if (!res.status) {
-        const { token, userId } = res
-        console.log(res)
+        const { token, ...fieldsToStore } = res
+        dispatch(setUser(fieldsToStore))
         localStorage.setItem('token', token)
-        localStorage.setItem('userId', userId)
+        localStorage.setItem('id', fieldsToStore.id)
         navigate('/')
       }
     } catch (error) {
@@ -35,9 +38,10 @@ const Landing = () => {
         body: JSON.stringify(values),
       })
       if (!res.status) {
-        const { token, userId } = res
+        const { token, ...fieldsToStore } = res
+        dispatch(setUser(fieldsToStore))
         localStorage.setItem('token', token)
-        localStorage.setItem('userId', userId)
+        localStorage.setItem('id', fieldsToStore.id)
         navigate('/')
       }
     } catch (error) {

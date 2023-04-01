@@ -93,7 +93,10 @@ export const validateUserCredentials = async (req, res) => {
     if (user.password !== password) {
       return res.status(401).json({ message: 'Invalid credentials' })
     }
-    return res.status(200).json({ userId: user._id })
+    // eslint-disable-next-line
+    const { password: _, ...fieldsToReturn } = user.toObject()
+    console.log(fieldsToReturn)
+    return res.status(200).json(fieldsToReturn)
   } catch (error) {
     console.error(error)
     return res.status(500).json({ message: 'Internal server error' })

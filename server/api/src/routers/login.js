@@ -21,8 +21,8 @@ router.post('/', async (req, res) => {
     const responseJSON = await response.json()
     if (response.status == 200) {
       // user validated
-      const token = generate(responseJSON.userId)
-      res.status(response.status).json({ token, userId: responseJSON.userId })
+      const token = generate(responseJSON._id)
+      res.status(response.status).json({ token, ...responseJSON })
     } else {
       /**
        * 404 - user not found
