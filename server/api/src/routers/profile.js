@@ -54,19 +54,23 @@ router.put(
   }
 )
 
-// PUT /users/personal-information/:id
+// PUT /users/:userId/personal-information/:id
 // Update personal information fields for a user
 router.put(
-  '/personal-information',
+  '/:userId/personal-information',
   setUserIdFromToken,
   async (request, response) => {
+    const userId = request.params.userId
     const options = {
       method: 'PUT',
       body: JSON.stringify(request.body),
       headers,
     }
     try {
-      const resp = await fetch(`${BASE_URL}/personal-information`, options)
+      const resp = await fetch(
+        `${BASE_URL}/${userId}/personal-information`,
+        options
+      )
       const updatedUser = await resp.json()
       response.json(updatedUser)
     } catch (e) {

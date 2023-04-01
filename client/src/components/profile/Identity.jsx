@@ -59,6 +59,7 @@ const IdentityCard = () => {
   }
 
   // Function to handle cancel button click
+  // resets form field values and sets edit mode to false
   const handleCancelClick = () => {
     initiateValues()
     setEditMode(false)

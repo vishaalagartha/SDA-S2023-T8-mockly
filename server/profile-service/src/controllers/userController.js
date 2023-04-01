@@ -104,7 +104,7 @@ export const validateUserCredentials = async (req, res) => {
 
 /**
  * Controller for PUT /users/:userId/personal-identity
- * Returns a user by ID (by default all details except password else the fields requested in the request query)
+ * updates personal identity (firstName, lastName, position, organization) for a particular user
  */
 export const updatePersonalIdentity = async (req, res) => {
   const userId = req.params.userId
@@ -135,12 +135,12 @@ export const updatePersonalIdentity = async (req, res) => {
         message: `User with ID ${userId} not found`,
       })
     }
-    // Return a success message along with a 200 status code
+    // if user was not found return 404 error
     return res.status(200).json({
       message: 'Personal identity updated',
     })
   } catch (error) {
-    // On error, return a 500 status code with an error message
+    // if user was not found return 404 error
     console.error(error)
     return res.status(500).json({
       message: 'Error updating personal identity',
@@ -149,10 +149,15 @@ export const updatePersonalIdentity = async (req, res) => {
   }
 }
 
+/**
+ * Controller for PUT /users/:userId/personal-information
+ * updates personal information (email, phone number, gender, pronouns, ethnicity)
+ */
 export const updatePersonalInformation = async (req, res) => {
-  const { userId, email, phoneNumber, pronouns, gender, ethnicity } = req.body
+  const userId = req.params.userId
+  const { email, phoneNumber, pronouns, gender, ethnicity } = req.body
 
-  // Check if request body contains any fields to update
+  // Check if request body contains required fields
   if (!email && !userId) {
     return res.status(400).json({
       message: 'Missing required fields',
@@ -160,7 +165,7 @@ export const updatePersonalInformation = async (req, res) => {
   }
 
   try {
-    // Update user document with new values
+    // Find the user by ID and update their personal information fields
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
       {
@@ -172,15 +177,16 @@ export const updatePersonalInformation = async (req, res) => {
       },
       { new: true }
     )
+    // if user was not found return 404 error
     if (!updatedUser) {
       return res.status(404).json({
         message: `User with ID ${userId} not found`,
       })
     }
-    return res
-      .status(200)
-      .json({ message: 'Personal Information Updated', user: updatedUser })
+    // if user was not found return 404 error
+    return res.status(200).json({ message: 'Personal Information Updated' })
   } catch (error) {
+    // if user was not found return 404 error
     console.error(error)
     return res.status(500).json({
       message: 'Error updating personal information',

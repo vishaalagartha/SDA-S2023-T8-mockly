@@ -45,9 +45,9 @@ router.post('/credentials', validateUserCredentials)
 // Update personal identity fields for a user
 router.put('/:userId/personal-identity', updatePersonalIdentity)
 
-// PUT /users/personal-information/:id
+// PUT /users/:userId/personal-information/:id
 // Update personal information fields for a user
-router.put('/personal-information', updatePersonalInformation)
+router.put('/:userId/personal-information', updatePersonalInformation)
 
 // POST /users/education
 // Create a new education entry for a user

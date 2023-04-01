@@ -14,8 +14,10 @@ export const fetchUserAPI = async (userId) =>
     method: 'GET',
   })
 
-export const updatePersonalInformationAPI = async (payload) =>
-  request('users/personal-information', {
+// update personal information (email, phone number, gender, ethnicity, pronouns) for a particular user
+// PUT /api/users/:userId/personal-information
+export const updatePersonalInformationAPI = async (userId, payload) =>
+  request(`users/${userId}/personal-information`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   })

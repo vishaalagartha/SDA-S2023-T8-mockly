@@ -99,10 +99,10 @@ const InterviewerDetailsCard = () => {
 
   const renderFields = (fields) => {
     return fields.map((field) => {
-      const id = find(FIELD_OPTIONS, { value: field })
+      const fieldObj = find(FIELD_OPTIONS, { value: field })
       return (
-        <Tag className='user-field-tag' key={id.value}>
-          {field}
+        <Tag className='user-field-tag' key={fieldObj.value}>
+          {fieldObj.text}
         </Tag>
       )
     })

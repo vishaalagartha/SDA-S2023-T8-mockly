@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { map } from 'lodash'
 
 import { Card, Button, Form, Input, Typography, Select } from 'antd'
+import { useForm } from 'antd/es/form/Form'
 import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPersonalInformation } from '../../store/userSlice'
@@ -37,30 +38,29 @@ const PersonalInformationCard = () => {
   }
 
   const dispatch = useDispatch()
+  const [form] = useForm()
 
-  // value is set when click on edit icon on top-right of card.
+  // set editMode to true for edit card mode else false for display mode
   const [editMode, setEditMode] = useState(false)
+  // set loading to true to see loading spinner else false to hide the spinner
   const [loading, setLoading] = useState(false)
+
+  // Retrieve the user's personal information from the Redux store
   const user = useSelector(getUserPersonalInformation)
 
-  // used to save the form's state
-  const [formData, setFormData] = useState({
-    email: user.email,
-    phoneNumber: user.phoneNumber,
-    pronouns: user.pronouns,
-    gender: user.gender,
-    ethnicity: user.ethnicity,
-  })
-
-  // toggles edit mode value on edit icon click and reset the forms state back to original state
-  const handleEditClick = () => {
-    setFormData({
+  const initiateValues = () => {
+    form.setFieldsValue({
       email: user.email,
       phoneNumber: user.phoneNumber,
       pronouns: user.pronouns,
       gender: user.gender,
       ethnicity: user.ethnicity,
     })
+  }
+
+  // toggles edit mode value on edit icon click and reset the forms state back to original state
+  const handleEditClick = () => {
+    initiateValues()
     setEditMode((prevEditMode) => !prevEditMode)
   }
 
@@ -68,10 +68,15 @@ const PersonalInformationCard = () => {
   const handleSaveClick = async () => {
     setLoading(true)
     try {
-      const res = await updatePersonalInformationAPI({ ...formData })
+      const userId = localStorage.getItem('id')
+      // Validate the form fields and obtain the form values
+      const formValues = await form.validateFields()
+      // Make an API call to update the user's personal information
+      const res = await updatePersonalInformationAPI(userId, { ...formValues })
       console.log('Personal Information updated: ', res)
+      // if API call is successful, dispatch the setPersonalInformation action to update the Redux store
       if (!res.status) {
-        dispatch(setPersonalInformation(formData))
+        dispatch(setPersonalInformation(formValues))
       }
     } catch (e) {
       console.log(e)
@@ -80,34 +85,14 @@ const PersonalInformationCard = () => {
     setEditMode(false)
   }
 
-  // resets the form's state back to original state and sets edit mode to false
+  // Function to handle cancel button click
+  // resets form field values and sets edit mode to false
   const handleCancelClick = () => {
-    setFormData({
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      pronouns: user.pronouns,
-      gender: user.gender,
-      ethnicity: user.ethnicity,
-    })
+    initiateValues()
     setEditMode(false)
   }
 
-  // updates the formData state on any input change
-  const handleInputChange = (e) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [e.target.name]: e.target.value,
-    }))
-  }
-
-  // updates the formData state on any select dropdown state
-  const handleSelectChange = (value, name) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }))
-  }
-
+  // Render the PersonalInformation Card
   return (
     <Card
       className='user-profile-card'
@@ -120,11 +105,7 @@ const PersonalInformationCard = () => {
       }
     >
       {editMode ? (
-        <Form
-          layout='vertical'
-          onFinish={handleSaveClick}
-          initialValues={formData}
-        >
+        <Form form={form} layout='vertical' onFinish={handleSaveClick}>
           <Form.Item
             label='Email'
             name='email'
@@ -140,11 +121,7 @@ const PersonalInformationCard = () => {
             ]}
             hasFeedback
           >
-            <Input
-              name='email'
-              value={formData.email}
-              onChange={handleInputChange}
-            />
+            <Input name='email' />
           </Form.Item>
           <Form.Item
             name='phoneNumber'
@@ -161,18 +138,10 @@ const PersonalInformationCard = () => {
             ]}
             hasFeedback
           >
-            <Input
-              name='phoneNumber'
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-            />
+            <Input name='phoneNumber' />
           </Form.Item>
-          <Form.Item label='Pronouns'>
-            <Select
-              defaultValue=''
-              value={formData.pronouns}
-              onChange={(value) => handleSelectChange(value, 'pronouns')}
-            >
+          <Form.Item name='pronouns' label='Pronouns'>
+            <Select>
               {map(pronounsOptions, (label, value) => (
                 <Option key={value} value={value}>
                   {label}
@@ -180,12 +149,8 @@ const PersonalInformationCard = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label='Gender'>
-            <Select
-              defaultValue=''
-              value={formData.gender}
-              onChange={(value) => handleSelectChange(value, 'gender')}
-            >
+          <Form.Item name='gender' label='Gender'>
+            <Select>
               {map(genderOptions, (label, value) => (
                 <Option key={value} value={value}>
                   {label}
@@ -193,14 +158,8 @@ const PersonalInformationCard = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label='Ethnicity'>
-            <Select
-              placeholder='Select ethnicity'
-              defaultValue=''
-              value={formData.ethnicity}
-              onChange={(value) => handleSelectChange(value, 'ethnicity')}
-              style={{ width: '100%' }}
-            >
+          <Form.Item name='ethnicity' label='Ethnicity'>
+            <Select placeholder='Select ethnicity' style={{ width: '100%' }}>
               {map(ethnicityOptions, (label, value) => (
                 <Option key={value} value={value}>
                   {label}
