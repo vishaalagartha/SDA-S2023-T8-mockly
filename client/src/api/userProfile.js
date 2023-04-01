@@ -18,14 +18,16 @@ export const updatePersonalInformationAPI = async (payload) =>
     body: JSON.stringify(payload),
   })
 
-export const addSkillAPI = async (payload) =>
-  request('users/skills', {
+// add a new skill to a particular user (POST /api/users/:userId/skills)
+export const addSkillAPI = async (userId, payload) =>
+  request(`users/${userId}/skills`, {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 
-export const deleteSkillAPI = async (payload) =>
-  request('users/skills', {
+// delete a skill of a particular user (DELETE /api/users/:userId/skills)
+export const deleteSkillAPI = async (userId, payload) =>
+  request(`users/${userId}/skills`, {
     method: 'DELETE',
     body: JSON.stringify(payload),
   })

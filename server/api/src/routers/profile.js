@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import fetch from 'node-fetch'
+// eslint-disable-next-line no-unused-vars
 import { validate } from '../utils/token'
 import { setUserIdFromToken } from '../middlewares/setUserIdFromToken'
 import { headers } from '../utils/constants'
@@ -120,16 +121,17 @@ router.delete('/education', async (request, response) => {
   }
 })
 
-// POST /users/skills
-// Create a new skill for a user
-router.post('/skills', setUserIdFromToken, async (request, response) => {
+// POST /users/:userId/skills
+// Create a new skill for a particular user
+router.post('/:userId/skills', verifyUserIdParam, async (request, response) => {
+  const userId = request.params.userId
   const options = {
     method: 'POST',
     body: JSON.stringify(request.body),
     headers,
   }
   try {
-    const resp = await fetch(`${BASE_URL}/skills`, options)
+    const resp = await fetch(`${BASE_URL}/${userId}/skills`, options)
     const skill = await resp.json()
     response.json(skill)
   } catch (e) {
@@ -137,22 +139,27 @@ router.post('/skills', setUserIdFromToken, async (request, response) => {
   }
 })
 
-// DELETE /users/skills
-// Delete a skill for a user
-router.delete('/skills', setUserIdFromToken, async (request, response) => {
-  const options = {
-    method: 'DELETE',
-    body: JSON.stringify(request.body),
-    headers,
+// DELETE /users/:userId/skills
+// Delete a skill for a particular user
+router.delete(
+  '/:userId/skills',
+  verifyUserIdParam,
+  async (request, response) => {
+    const userId = request.params.userId
+    const options = {
+      method: 'DELETE',
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/${userId}/skills`, options)
+      const message = await resp.json()
+      response.status(resp.status).json({ message: message })
+    } catch (e) {
+      response.status(500).json({ message: 'Internal Server Error' })
+    }
   }
-  try {
-    const resp = await fetch(`${BASE_URL}/skills`, options)
-    const message = await resp.json()
-    response.status(resp.status).json({ message: message })
-  } catch (e) {
-    response.status(500).json({ message: 'Internal Server Error' })
-  }
-})
+)
 
 // POST /users/courses
 // Create a new course entry for a user
@@ -320,7 +327,7 @@ router.put(
   }
 )
 
-// Remove this route
+// TODO: Remove this route
 // GET /users/interviewer
 // Retrieves a list of interviewers and their associated skills
 // Returns an array of objects, each containing the interviewer's name and their skills

@@ -61,13 +61,13 @@ router.put('/education', updateEducation)
 // Delete an existing education entry for a user
 router.delete('/education', deleteEducation)
 
-// POST /users/skills
+// POST /users/:userId/skills
 // Create a new skill for a user
-router.post('/skills', createSkill)
+router.post('/:userId/skills', createSkill)
 
-// DELETE /users/skills
+// DELETE /users/:userId/skills
 // Delete a skill for a user
-router.delete('/skills', deleteSkill)
+router.delete('/:userId/skills', deleteSkill)
 
 // POST /users/courses
 // Create a new course entry for a user
