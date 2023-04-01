@@ -41,7 +41,6 @@ const InterviewerDetailsCard = () => {
   const [timeSlots, setTimeSlots] = useState([])
 
   useEffect(() => {
-    console.log('USE EFFECT', interviewer)
     initiateValues()
   }, [interviewer, form])
 
@@ -110,12 +109,13 @@ const InterviewerDetailsCard = () => {
   }
 
   const renderTimeSlots = (timeSlots, isClosable) => {
+    console.log(timeSlots)
     return timeSlots.map((slot, index) => (
       <Tag
         className='user-time-slot-tag'
         closable={isClosable}
-        key={index}
-        onClose={isClosable ? () => handleRemoveTimeSlot(slot) : null}
+        key={`${slot}-${index}`}
+        onClose={isClosable ? () => handleRemoveTimeSlot(index) : null}
       >
         {slot}
       </Tag>
