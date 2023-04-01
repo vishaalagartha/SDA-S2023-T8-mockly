@@ -14,6 +14,17 @@ app.get('/api/', (req, res) => {
   res.json({ message: 'Hello from Feedback' })
 })
 
+app.get('/feedback', async (request, response) => {
+  const { userId } = request.query
+  try {
+    const receivedFeedback = await MatchController.getByUserId(userId)
+    response.json(receivedFeedback)
+  } catch (e) {
+    console.error(e)
+    response.status(500).send({ message: 'Internal server error.'})
+  }
+})
+
 app.get('/test', (req, res) => {
   const feedbackObj = new Feedback({},{
     reviewer: 'a',

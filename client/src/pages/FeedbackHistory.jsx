@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import FeedbackRow from '../components/FeedbackHistory/FeedbackRow'
 //  import { Row, Col } from 'antd'
 //  import { fetchUserAPI } from '../api/userProfile'
+import { fetchFeedback } from '../api/feedback'
 import { setFeedbackHistory, feedbackHistorySelector} from '../store/feedbackHistorySlice'
 import FeedbackModal from '../components/FeedbackHistory/FeedbackModal'
 
@@ -21,6 +22,7 @@ const FeedbackHistoryPage = () => {
         
         console.log('Profile Page', response)
         */
+        
         //  this will be replaced with fetching the feedback you get
         //  This uses dummy data for now 
         const response = [{
@@ -77,8 +79,12 @@ const FeedbackHistoryPage = () => {
 
           }
         }]
+        /*
         console.log("done");
         dispatch(setFeedbackHistory(response))
+        */
+        const res = await fetchFeedback(user._id)
+        dispatch(setFeedbackHistory(res))
       } catch (error) {
         console.error(error)
       }
