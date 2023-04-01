@@ -4,7 +4,6 @@ import { Modal, Row, Form, Radio, Tag, Typography, Select, Steps, Divider, Butto
 import { useForm } from "antd/es/form/Form"
 import { LeftCircleTwoTone, RightCircleTwoTone } from "@ant-design/icons"
 import { createInterview, findMatches } from "../api/interview"
-import { ClimbingBoxLoader } from 'react-spinners'
 import { useDispatch, useSelector } from 'react-redux'
 import { addInterview } from "../store/interviewsSlice"
 // eslint-disable-next-line no-unused-vars
@@ -24,29 +23,11 @@ const InterviewModal = ({ open, setOpen }) => {
   const [messageApi, contextHolder] = message.useMessage()
   const [times, setTimes] = useState([])
   const [timeStatus, setTimeStatus] = useState('success')
-  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   // eslint-disable-next-line no-unused-vars
   const user = useSelector(userSelector)
 
-  const [matches, setMatches] = useState([
-    {
-      interviewer: 'peer',
-      fields: ['DATA_STRUCTURES_ALGORITHMS', 'BACKEND'],
-      time: [1648167213000, 1648167245000],
-    },
-    {
-      interviewer: 'expert',
-      fields: ['SYSTEM_DESIGN', 'BACKEND', 'FRONTEND'],
-      time: [1648170011000, 1648170032000],
-    },
-    {
-      interviewer: 'peer',
-      fields: ['BEHAVIORAL', 'FRONTEND'],
-      time: [1648172808000, 1648172830000],
-    },
-  ])
-
+  const [matches, setMatches] = useState([])
 
   useEffect(() => {
     form.resetFields()
@@ -63,7 +44,6 @@ const InterviewModal = ({ open, setOpen }) => {
   }
 
   const handleSubmit = async () => {
-    setLoading(true)
     try {
       await form.validateFields()
       if (!times.length) {
@@ -78,7 +58,6 @@ const InterviewModal = ({ open, setOpen }) => {
     } catch (e) {
       messageApi.open({ type: 'error', content: 'Failed to request matches.' })
     }
-    setLoading(false)
   }
 
   const addTimeSlot = (time) => {
@@ -97,15 +76,9 @@ const InterviewModal = ({ open, setOpen }) => {
   // eslint-disable-next-line no-unused-vars
   const handleConfirm = async (idx) => {
     try {
-      const mockMatch = {
-        interviewerType: 'expert',
-        interviewer: 'uid',
-        interviewee: 'uid',
-        field: 'DATA_SCIENCE',
-        time: 1648170032000,
-        difficulty: 'intermediate'
-      }
-      const res = await createInterview(mockMatch)
+      const { interviewer: interviewerType, field, difficulty } = form.getFieldsValue()
+      const match = { ...matches[idx], interviewerType, field, difficulty, interviewee: user._id }
+      const res = await createInterview(match)
       messageApi.open({ type: 'success', content: 'Successfully booked your interview!' })
       dispatch(addInterview(res))
       setOpen(false)
@@ -140,115 +113,113 @@ const InterviewModal = ({ open, setOpen }) => {
         </>
       }>
         { contextHolder }
-        { loading ? <ClimbingBoxLoader /> :
-          <Form
-            form={form}>
-              <div className={'text-center' + (step === 0 ? '' : ' d-none')}>
-                <Row justify="center" className="m-5">
-                  <Typography.Title level={3}>Who would you like to interview with?</Typography.Title>
-                </Row>
-                <Row justify="center">
-                  <Form.Item name="interviewer" rules={[{ required: true, message: 'Please select an interviewer type.' }]}>
-                    <Radio.Group buttonStyle="solid" className="text-center">
-                      <Radio.Button value="peer">Peer</Radio.Button>
-                      <Radio.Button value="expert">Industry Expert</Radio.Button>
-                    </Radio.Group>
-                  </Form.Item>
-                </Row>
-              </div>
-            <div className={'text-center' + (step === 1 ? '' : ' d-none')}>
+        <Form
+          form={form}>
+            <div className={'text-center' + (step === 0 ? '' : ' d-none')}>
               <Row justify="center" className="m-5">
-                <Typography.Title level={3}>What field would you like to focus on?</Typography.Title>
-              </Row>
-                <Row justify="center">
-                  <Form.Item name="field" rules={[{ required: true, message: 'Please select a field of focus.' }]}>
-                    <Select
-                      style={{ minWidth: 300 }}
-                      options={[
-                        { value: 'DATA_STRUCTURES_ALGORITHMS', label: 'Data Structures & Algorithms' },
-                        { value: 'SYSTEM_DESIGN', label: 'System Design' },
-                        { value: 'DATA_SCIENCE', label: 'Data Science' },
-                        { value: 'FRONTEND', label: 'Frontend' },
-                        { value: 'BACKEND', label: 'Backend' },
-                        { value: 'BEHAVIORAL', label: 'Behavioral' },
-                      ]}
-                    />
-                  </Form.Item>
-
-                </Row>
-            </div>
-            <div className={'text-center' + (step === 2 ? '' : ' d-none')} >
-              <Row justify="center" className="m-5">
-                <Typography.Title level={3}>What level of expertise are you? How challenging would you like the interview to be?</Typography.Title>
+                <Typography.Title level={3}>Who would you like to interview with?</Typography.Title>
               </Row>
               <Row justify="center">
-                <Form.Item name="difficulty" rules={[{ required: true, message: 'Please select a difficulty level' }]}>
+                <Form.Item name="interviewer" rules={[{ required: true, message: 'Please select an interviewer type.' }]}>
                   <Radio.Group buttonStyle="solid" className="text-center">
-                    <Radio.Button value="introductory">Introductory</Radio.Button>
-                    <Radio.Button value="intermediate">Intermediate</Radio.Button>
-                    <Radio.Button value="advanced">Advanced</Radio.Button>
+                    <Radio.Button value="peer">Peer</Radio.Button>
+                    <Radio.Button value="expert">Industry Expert</Radio.Button>
                   </Radio.Group>
                 </Form.Item>
               </Row>
             </div>
-            <div className={'text-center' + (step === 3 ? '' : ' d-none')} >
-              <Row justify="center" className="m-5">
-                <Typography.Title level={3}>Please select your available time slots in the next 3 weeks.</Typography.Title>
-              </Row>
+          <div className={'text-center' + (step === 1 ? '' : ' d-none')}>
+            <Row justify="center" className="m-5">
+              <Typography.Title level={3}>What field would you like to focus on?</Typography.Title>
+            </Row>
               <Row justify="center">
-                <Form.Item name="date" validateStatus={timeStatus} help={timeStatus === 'error' ? 'Please select at least 1 time slot.' : ''}>
-                  <DatePicker 
-                    showTime={{ use12Hours: true }} 
-                    format="MM/DD/YY h A" 
-                    onOk={addTimeSlot} 
-                    disabledDate={current => {
-                      const inPast = current && current < dayjs().endOf('day')
-                      const afterThreeWeeks = current && current && current > dayjs().endOf('day').add(3, 'week')
-                      return inPast || afterThreeWeeks
-                    }}
+                <Form.Item name="field" rules={[{ required: true, message: 'Please select a field of focus.' }]}>
+                  <Select
+                    style={{ minWidth: 300 }}
+                    options={[
+                      { value: 'DATA_STRUCTURES_ALGORITHMS', label: 'Data Structures & Algorithms' },
+                      { value: 'SYSTEM_DESIGN', label: 'System Design' },
+                      { value: 'DATA_SCIENCE', label: 'Data Science' },
+                      { value: 'FRONTEND', label: 'Frontend' },
+                      { value: 'BACKEND', label: 'Backend' },
+                      { value: 'BEHAVIORAL', label: 'Behavioral' },
+                    ]}
                   />
                 </Form.Item>
+
               </Row>
-              <Row>
-                {times.map((t, i) => {
-                  return (
-                    <Tag key={i} closable onClose={() => removeTimeSlot(i)} className="d-flex align-items-center"><div>{t}</div></Tag>
-                  )
-                })}
-              </Row>
-            </div>
-            <div className={'text-center' + (step === 4 ? '' : ' d-none')} >
-              <Row justify="center" className="m-5">
-                {matches.length === 0 ?
-                <Typography.Title level={3}>We found no matches for you as of now</Typography.Title>
-                :
+          </div>
+          <div className={'text-center' + (step === 2 ? '' : ' d-none')} >
+            <Row justify="center" className="m-5">
+              <Typography.Title level={3}>What level of expertise are you? How challenging would you like the interview to be?</Typography.Title>
+            </Row>
+            <Row justify="center">
+              <Form.Item name="difficulty" rules={[{ required: true, message: 'Please select a difficulty level' }]}>
+                <Radio.Group buttonStyle="solid" className="text-center">
+                  <Radio.Button value="introductory">Introductory</Radio.Button>
+                  <Radio.Button value="intermediate">Intermediate</Radio.Button>
+                  <Radio.Button value="advanced">Advanced</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
+            </Row>
+          </div>
+          <div className={'text-center' + (step === 3 ? '' : ' d-none')} >
+            <Row justify="center" className="m-5">
+              <Typography.Title level={3}>Please select your available time slots in the next 3 weeks.</Typography.Title>
+            </Row>
+            <Row justify="center">
+              <Form.Item name="date" validateStatus={timeStatus} help={timeStatus === 'error' ? 'Please select at least 1 time slot.' : ''}>
+                <DatePicker 
+                  showTime={{ use12Hours: true }} 
+                  format="MM/DD/YY h A" 
+                  onOk={addTimeSlot} 
+                  disabledDate={current => {
+                    const inPast = current && current < dayjs().endOf('day')
+                    const afterThreeWeeks = current && current && current > dayjs().endOf('day').add(3, 'week')
+                    return inPast || afterThreeWeeks
+                  }}
+                />
+              </Form.Item>
+            </Row>
+            <Row>
+              {times.map((t, i) => {
+                return (
+                  <Tag key={i} closable onClose={() => removeTimeSlot(i)} className="d-flex align-items-center"><div>{t}</div></Tag>
+                )
+              })}
+            </Row>
+          </div>
+          <div className={'text-center' + (step === 4 ? '' : ' d-none')} >
+            <Row justify="center" className="m-5">
+              {matches.length === 0 ?
+              <Typography.Title level={3}>We found no matches for you as of now</Typography.Title>
+              :
+              <Space direction="vertical">
+                <Typography.Title level={3}>We found {matches.length} matches for you!</Typography.Title>
+                <Typography.Text> Please select one of the below to confirm your interview.</Typography.Text>
+              </Space>
+              }
+            </Row>
+            <Row justify="center">
+              {matches.length === 0 ?
                 <Space direction="vertical">
-                  <Typography.Title level={3}>We found {matches.length} matches for you!</Typography.Title>
-                  <Typography.Text> Please select one of the below to confirm your interview.</Typography.Text>
+                  <Typography.Text>You can go back to the previous form and resubmit to find more matches.</Typography.Text>
+                  <Typography.Text>Or come back later when an interviewer is available at your selected time.</Typography.Text>
+                </Space> 
+                :
+                <Space direction="vertical" size="large">
+                  {matches.map((match, i) => {
+                      const { time, username = '' } = match
+                      const formattedTime = dayjs(time[0]).format('MM/DD/YY h A')
+                      return (
+                        <Button key={i} onClick={() => handleConfirm(i)} type="dashed">{username} at {formattedTime}</Button>
+                      )
+                  })}
                 </Space>
-                }
-              </Row>
-              <Row justify="center">
-                {matches.length === 0 ?
-                  <Space direction="vertical">
-                    <Typography.Text>You can go back to the previous form and resubmit to find more matches.</Typography.Text>
-                    <Typography.Text>Or come back later when an interviewer is available at your selected time.</Typography.Text>
-                  </Space> 
-                  :
-                  <Space direction="vertical" size="large">
-                    {matches.map((match, i) => {
-                        const { time, username = '' } = match
-                        const formattedTime = dayjs(time[0]).format('MM/DD/YY h A')
-                        return (
-                          <Button key={i} onClick={() => handleConfirm(i)} type="dashed">{username} at {formattedTime}</Button>
-                        )
-                    })}
-                  </Space>
-                }
-              </Row>
-            </div>
-          </Form>
-        }
+              }
+            </Row>
+          </div>
+        </Form>
       </Modal>
   )
 }

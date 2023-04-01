@@ -1,12 +1,29 @@
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
+import { useEffect } from 'react'
+import { fetchUserAPI } from '../api/userProfile'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../store/userSlice'
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token')
   const navigate = useNavigate()
-  if (!token) {
-    navigate('/login')
-  }
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const uid = localStorage.getItem('id')
+    if (!token) {
+      navigate('/login')
+    }
+
+    const fetchUser = async () => {
+      const res = await fetchUserAPI(uid)
+      if (res.status === 200)
+        dispatch(setUser(res.data))
+    }
+    fetchUser()
+  }, [])
+
 
   return <Header>{children}</Header>
 }

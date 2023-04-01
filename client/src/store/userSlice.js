@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { concat, reject, remove } from 'lodash'
 
 const initialState = {
-  id: '',
+  _id: '',
   firstName: '',
   lastName: '',
   organization: '',

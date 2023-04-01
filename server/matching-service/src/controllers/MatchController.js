@@ -39,11 +39,15 @@ class MatchController {
     const preference = new PreferenceBuilder().interviewer(interviewer).field(field).difficulty(difficulty).make()
     const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/users`, { method: 'GET' })
     const allInterviewers = await res.json()
-    console.log(allInterviewers)
     const filteredInterviewers = allInterviewers.filter(interviewer => preference.isMatch(interviewer))
     // TODO: filter by schedule
     // return filteredInterviewers
-    return allInterviewers.slice(0, 3)
+    const matches = allInterviewers.map(interviewer => 
+      ({ 
+        interviewer: interviewer._id,
+        time: new Date().getTime(),
+      }))
+    return matches
   }
 }
 
