@@ -18,7 +18,7 @@ export const updatePersonalInformationAPI = async (payload) =>
     body: JSON.stringify(payload),
   })
 
-// add a new skill to a particular user (POST /api/users/:userId/skills)
+// add a new skill for a particular user (POST /api/users/:userId/skills)
 export const addSkillAPI = async (userId, payload) =>
   request(`users/${userId}/skills`, {
     method: 'POST',
@@ -32,14 +32,16 @@ export const deleteSkillAPI = async (userId, payload) =>
     body: JSON.stringify(payload),
   })
 
-export const addCourseAPI = async (payload) =>
-  request('users/courses', {
+// add a new course for a particular user (POST /api/users/:userId/courses)
+export const addCourseAPI = async (userId, payload) =>
+  request(`users/${userId}/courses`, {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 
-export const deleteCourseAPI = async (payload) =>
-  request('users/courses', {
+// delete a course for a particular user (DELETE /api/users/:userId/courses)
+export const deleteCourseAPI = async (userId, payload) =>
+  request(`users/${userId}/courses`, {
     method: 'DELETE',
     body: JSON.stringify(payload),
   })

@@ -6,22 +6,28 @@ import { Card, Tag, Input, Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { addCourseAPI, deleteCourseAPI } from '../../api/userProfile'
 
+// CoursesCard component to display and manage user courses
 const CoursesCard = () => {
+  // Setup for Redux dispatch and user courses selector
   const dispatch = useDispatch()
-
   const courses = useSelector(getUserCourses)
+
+  // State management for new course input and loading status
   const [newCourse, setNewCourse] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Handle new course input change, update the state with the input value
   const handleNewCourseChange = (event) => {
     setNewCourse(event.target.value)
   }
 
+  // Handle add course button click, add a new course if the input is not empty
   const handleAddCourseClick = async () => {
     if (newCourse !== '') {
       setLoading(true)
       try {
-        const res = await addCourseAPI({ courseName: newCourse })
+        const userId = localStorage.getItem('id')
+        const res = await addCourseAPI(userId, { courseName: newCourse })
         console.log('Added new course', res)
         dispatch(addCourse(res))
       } catch (e) {
@@ -32,10 +38,12 @@ const CoursesCard = () => {
     }
   }
 
+  // Handle remove course button click, remove a course based on its title
   const handleRemoveCourseClick = async (courseToRemove) => {
     setLoading(true)
     try {
-      const res = await deleteCourseAPI({ courseId: courseToRemove })
+      const userId = localStorage.getItem('id')
+      const res = await deleteCourseAPI(userId, { courseId: courseToRemove })
       console.log(res.message)
       if (!res.status) {
         dispatch(removeCourse({ courseId: courseToRemove }))
@@ -46,6 +54,7 @@ const CoursesCard = () => {
     setLoading(false)
   }
 
+  // Render user courses as a list of tags, allowing for removal of individual courses
   const renderCourses = () => {
     return courses.map((course) => (
       <Tag
@@ -59,6 +68,7 @@ const CoursesCard = () => {
     ))
   }
 
+  // Component JSX structure
   return (
     <Card className='user-profile-card' title='Courses' loading={loading}>
       {renderCourses()}

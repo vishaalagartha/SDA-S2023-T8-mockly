@@ -161,39 +161,49 @@ router.delete(
   }
 )
 
-// POST /users/courses
-// Create a new course entry for a user
-router.post('/courses', setUserIdFromToken, async (request, response) => {
-  const options = {
-    method: 'POST',
-    body: JSON.stringify(request.body),
-    headers,
+// POST /users/:userId/courses
+// Create a new course entry for a particular user
+router.post(
+  '/:userId/courses',
+  verifyUserIdParam,
+  async (request, response) => {
+    const userId = request.params.userId
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/${userId}/courses`, options)
+      const course = await resp.json()
+      response.json(course)
+    } catch (e) {
+      response.status(500).json({ message: 'Internal Server Error' })
+    }
   }
-  try {
-    const resp = await fetch(`${BASE_URL}/courses`, options)
-    const course = await resp.json()
-    response.json(course)
-  } catch (e) {
-    response.status(500).json({ message: 'Internal Server Error' })
-  }
-})
+)
 
-// DELETE /users/courses/:id
-// Delete an existing course entry for a user
-router.delete('/courses', setUserIdFromToken, async (request, response) => {
-  const options = {
-    method: 'DELETE',
-    body: JSON.stringify(request.body),
-    headers,
+// DELETE /users/:userId/courses
+// Delete an existing course entry for a particular user
+router.delete(
+  '/:userId/courses',
+  verifyUserIdParam,
+  async (request, response) => {
+    const userId = request.params.userId
+    const options = {
+      method: 'DELETE',
+      body: JSON.stringify(request.body),
+      headers,
+    }
+    try {
+      const resp = await fetch(`${BASE_URL}/${userId}/courses`, options)
+      const message = await resp.json()
+      response.status(resp.status).json({ message: message })
+    } catch (e) {
+      response.status(500).json({ message: 'Internal Server Error' })
+    }
   }
-  try {
-    const resp = await fetch(`${BASE_URL}/courses`, options)
-    const message = await resp.json()
-    response.status(resp.status).json({ message: message })
-  } catch (e) {
-    response.status(500).json({ message: 'Internal Server Error' })
-  }
-})
+)
 
 // POST /users/projects
 // Create a new project entry for a user

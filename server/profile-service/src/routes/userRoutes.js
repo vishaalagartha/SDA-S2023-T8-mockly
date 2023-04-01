@@ -69,13 +69,13 @@ router.post('/:userId/skills', createSkill)
 // Delete a skill for a user
 router.delete('/:userId/skills', deleteSkill)
 
-// POST /users/courses
+// POST /users/:userId/courses
 // Create a new course entry for a user
-router.post('/courses', createCourse)
+router.post('/:userId/courses', createCourse)
 
-// DELETE /users/courses/:id
+// DELETE /users/:userId/courses
 // Delete an existing course entry for a user
-router.delete('/courses', deleteCourse)
+router.delete('/:userId/courses', deleteCourse)
 
 // POST /users/projects
 // Create a new project entry for a user

@@ -109,7 +109,6 @@ const InterviewerDetailsCard = () => {
   }
 
   const renderTimeSlots = (timeSlots, isClosable) => {
-    console.log(timeSlots)
     return timeSlots.map((slot, index) => (
       <Tag
         className='user-time-slot-tag'
