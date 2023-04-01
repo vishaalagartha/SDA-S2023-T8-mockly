@@ -109,6 +109,7 @@ router.put('/:userId/summary', updateSummary)
 // Update the interviewer card for a user
 router.put('/:userId/interviewer-details', updateInterviewerDetails)
 
+// TODO: delete this route
 // GET /users/interviewer
 // Retrieves a list of interviewers and their associated skills
 // Returns an array of objects, each containing the interviewer's name and their skills

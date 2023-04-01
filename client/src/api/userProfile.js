@@ -57,6 +57,8 @@ export const updateSummaryAPI = async (userId, payload) =>
     body: JSON.stringify(payload),
   })
 
+// update interviewer details (type, fields, time) for a particular user
+// PUT /api/users/:userId/interviewer-details
 export const updateInterviewerDetailsAPI = async (userId, payload) =>
   request(`users/${userId}/interviewer-details`, {
     method: 'PUT',

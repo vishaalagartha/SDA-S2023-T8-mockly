@@ -34,10 +34,14 @@ const InterviewerDetailsCard = () => {
     { value: 'BEHAVIORAL', text: 'Behavioral' },
   ]
 
+  // set editMode to true for edit card mode else false for display mode
   const [editMode, setEditMode] = useState(false)
+  // set loading to true to see loading spinner else false to hide the spinner
   const [loading, setLoading] = useState(false)
 
+  // Retrieve the user's interviewer details from the Redux store
   const interviewer = useSelector(getUserInterviewerDetails).interviewerDetails
+  // local state for timeSlots to show tags as the date time is selected
   const [timeSlots, setTimeSlots] = useState([])
 
   useEffect(() => {
@@ -54,11 +58,13 @@ const InterviewerDetailsCard = () => {
     })
   }
 
+  // toggles edit mode value on edit icon click and reset the forms state back to original state
   const handleEditClick = () => {
     setEditMode((prevEditMode) => !prevEditMode)
     initiateValues()
   }
 
+  // Add a time slot to the list of time slots
   const handleAddTimeSlot = (dateTime) => {
     form.setFieldValue('timeSlots', '')
     const formattedTime = dateTime.format('MM/DD/YY h A')
@@ -69,6 +75,7 @@ const InterviewerDetailsCard = () => {
     setTimeSlots(newTimeSlots)
   }
 
+  // Remove a time slot from the list of time slots
   const handleRemoveTimeSlot = (idx) => {
     setTimeSlots(timeSlots.filter((_, i) => i !== idx))
   }
@@ -77,14 +84,19 @@ const InterviewerDetailsCard = () => {
     setLoading(true)
     const userId = localStorage.getItem('id')
     try {
+      // Validate the form fields and obtain the form values
       const formValues = await form.validateFields()
       const formData = {
         ...formValues,
         time: timeSlots.map((slot) => dayjs(slot, 'MM/DD/YY h A').unix()),
       }
+      // Make an API call to update the user's interviewer details
       const res = await updateInterviewerDetailsAPI(userId, { ...formData })
       console.log('Interviewer Details updated: ', res)
-      dispatch(setInterviewerDetails(formData))
+      // if API call is successful, dispatch the setInterviewerDetails action to update the Redux store
+      if (!res.status) {
+        dispatch(setInterviewerDetails(formData))
+      }
     } catch (e) {
       console.log(e)
     }
@@ -92,11 +104,14 @@ const InterviewerDetailsCard = () => {
     setEditMode(false)
   }
 
+  // Function to handle cancel button click
+  // resets form field values and sets edit mode to false
   const handleCancelClick = () => {
     initiateValues()
     setEditMode(false)
   }
 
+  // render tags for the list of fields
   const renderFields = (fields) => {
     return fields.map((field) => {
       const fieldObj = find(FIELD_OPTIONS, { value: field })
@@ -108,6 +123,7 @@ const InterviewerDetailsCard = () => {
     })
   }
 
+  // render tags for the list of time slots
   const renderTimeSlots = (timeSlots, isClosable) => {
     return timeSlots.map((slot, index) => (
       <Tag
@@ -121,6 +137,7 @@ const InterviewerDetailsCard = () => {
     ))
   }
 
+  // Render the Interviewer Details Card
   return (
     <Card
       className='user-profile-card'

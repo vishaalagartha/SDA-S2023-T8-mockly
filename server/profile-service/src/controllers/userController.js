@@ -761,9 +761,14 @@ export const updateSummary = async (req, res) => {
   }
 }
 
+/**
+ * Controller for PUT /users/:userId/interviewer-details
+ * Update interviewer details (type, fields, ) of a particular user
+ */
 export const updateInterviewerDetails = async (req, res) => {
   const userId = req.params.userId
   const { type, fields, time } = req.body
+  // Check if request contains required fields
   if (!userId || !type || !fields || !time) {
     return res.status(400).json({
       error: 'Bad Request',
@@ -772,6 +777,7 @@ export const updateInterviewerDetails = async (req, res) => {
   }
 
   try {
+    // Find the user by ID and update their interviewer details fields
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
       {
@@ -781,16 +787,17 @@ export const updateInterviewerDetails = async (req, res) => {
       },
       { new: true }
     )
-
+    // If the user is not found, return a 404 error response
     if (!updatedUser) {
       return res.status(404).json({
         error: 'Not Found',
         message: 'User not found.',
       })
     }
-
+    // If the update is successful, return a 200 response with the updated summary
     return res.status(200).json(updatedUser)
   } catch (error) {
+    // Return a 500 error response with an appropriate message
     console.log(error)
     return res.status(500).json({
       error: 'Internal Server Error',
