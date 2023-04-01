@@ -3,6 +3,8 @@ import cors from 'cors'
 import MatchController from './controllers/MatchController'
 import PreferenceBuilder from './preferences/PreferenceBuilder'
 import * as Database from './utils/Database'
+import fetch from 'node-fetch'
+import { PORTS } from './utils/constants'
 
 const PORT = parseInt(process.env.PORT || '3003')
 
@@ -14,8 +16,15 @@ const app = express().use(
 
 Database.connect()
 
-app.get('/interviews', (req, res) => {
-  res.json({ message: 'GET interviews response' })
+app.get('/interviews', async (request, response) => {
+  const { userId } = request.query
+  try {
+    const interviews = await MatchController.getByUserId(userId)
+    response.json(interviews)
+  } catch (e) {
+    console.error(e)
+    response.status(500).send({ message: 'Internal server error.'})
+  }
 })
 
 app.post('/matches', async (request, response) => {
@@ -36,8 +45,14 @@ app.post('/interviews', async (request, response) => {
   const preference = new PreferenceBuilder().field(field).difficulty(difficulty).interviewer(interviewerType).make()
   const preferenceObj = preference.toObject()
   try {
+    console.log(interviewee, interviewer, preferenceObj, time)
     const interview = await MatchController.create(interviewee, interviewer, preferenceObj, time)
-    response.json(interview)
+    const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/users/${interview.interviewer}`, { method: 'GET' })
+    const interviewerDetails = await res.json()
+    console.log('interview', interview.toObject())
+    console.log('details', interviewerDetails)
+    const data = { ...interview.toObject(), interviewer: interviewerDetails }
+    response.json(data)
   } catch (e) {
     console.error(e)
     response.status(500).send({ message: 'Internal server error.'})

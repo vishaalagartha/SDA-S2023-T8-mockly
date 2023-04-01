@@ -18,8 +18,7 @@ const ProtectedRoute = ({ children }) => {
 
     const fetchUser = async () => {
       const res = await fetchUserAPI(uid)
-      if (res.status === 200)
-        dispatch(setUser(res.data))
+      dispatch(setUser(res))
     }
     fetchUser()
   }, [])

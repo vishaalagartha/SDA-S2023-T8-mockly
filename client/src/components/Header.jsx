@@ -31,6 +31,7 @@ const Header = ({ children }) => {
     localStorage.removeItem('token')
     localStorage.removeItem('id')
     navigate('/login')
+    navigate(0)
   }
 
   return (

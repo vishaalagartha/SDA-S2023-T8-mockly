@@ -16,6 +16,17 @@ export default Router()
     }
     
   })
+  .get('/interviews', async (request, response) => {
+    const options = { method: 'GET', headers }
+    const { userId } = request.query
+    try {
+      const resp = await fetch(`http://mockly-matching-service:3003/interviews?userId=${userId}`, options)
+      const interviews = await resp.json()
+      response.json(interviews)
+    } catch (e) {
+      response.status(500).send({ message: 'Internal server error '})
+    }
+  })
   .post('/interviews', async (request, response) => {
     const { body } = request
     const options = { method: 'POST', body: JSON.stringify(body), headers }
@@ -26,5 +37,4 @@ export default Router()
     } catch (e) {
       response.status(500).send({ message: 'Internal server error '})
     }
-    
   })
