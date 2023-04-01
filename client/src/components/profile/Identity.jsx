@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Avatar, Typography, Form, Input, Button } from 'antd'
+import { useForm } from 'antd/es/form/Form'
 import { EditOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserIdentity } from '../../store/userSelector'
@@ -10,36 +11,45 @@ const { Title } = Typography
 
 const IdentityCard = () => {
   const dispatch = useDispatch()
+  const [form] = useForm()
 
+  // set editMode to true for edit card mode else false for display mode
   const [editMode, setEditMode] = useState(false)
+  // set loading to true to see loading spinner else false to hide the spinner
   const [loading, setLoading] = useState(false)
 
+  // Retrieve the user's identity information from the Redux store
   const userIdentity = useSelector(getUserIdentity)
 
-  const [formData, setFormData] = useState({
-    firstName: userIdentity.firstName,
-    lastName: userIdentity.lastName,
-    organization: userIdentity.organization,
-    position: userIdentity.position,
-  })
-
-  const handleEditClick = () => {
-    setFormData({
+  // Function to initialize form values with the user's current identity information
+  const initiateValues = () => {
+    form.setFieldsValue({
       firstName: userIdentity.firstName,
       lastName: userIdentity.lastName,
       organization: userIdentity.organization,
       position: userIdentity.position,
     })
+  }
+
+  // Function to handle edit button click
+  const handleEditClick = () => {
+    initiateValues()
     setEditMode((prevEditMode) => !prevEditMode)
   }
 
+  // Function to handle save button click
   const handleSaveClick = async () => {
     setLoading(true)
     try {
-      const res = await updatePersonalIdentityAPI({ ...formData })
+      const userId = localStorage.getItem('id')
+      // Validate the form fields and obtain the form values
+      const formValues = await form.validateFields()
+      // Make an API call to update the user's personal identity
+      const res = await updatePersonalIdentityAPI(userId, { ...formValues })
       console.log('Personal Identity updated: ', res)
+      // if API call is successful, dispatch the setIdentity action to update the Redux store
       if (!res.status) {
-        dispatch(setIdentity(formData))
+        dispatch(setIdentity(formValues))
       }
     } catch (e) {
       console.log(e)
@@ -48,23 +58,13 @@ const IdentityCard = () => {
     setEditMode(false)
   }
 
+  // Function to handle cancel button click
   const handleCancelClick = () => {
-    setFormData({
-      firstName: userIdentity.firstName,
-      lastName: userIdentity.lastName,
-      organization: userIdentity.organization,
-      position: userIdentity.position,
-    })
+    initiateValues()
     setEditMode(false)
   }
 
-  const handleInputChange = (e) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [e.target.name]: e.target.value,
-    }))
-  }
-
+  // Render the IdentityCard component
   return (
     <Card
       className='user-profile-card'
@@ -81,11 +81,7 @@ const IdentityCard = () => {
       </div>
       {editMode ? (
         <>
-          <Form
-            layout='vertical'
-            onFinish={handleSaveClick}
-            initialValues={formData}
-          >
+          <Form form={form} layout='vertical' onFinish={handleSaveClick}>
             <Form.Item
               name='firstName'
               label='First Name'
@@ -97,32 +93,16 @@ const IdentityCard = () => {
               ]}
               hasFeedback
             >
-              <Input
-                name='firstName'
-                value={formData.firstName}
-                onChange={handleInputChange}
-              />
+              <Input name='firstName' />
             </Form.Item>
             <Form.Item name='lastName' label='Last Name'>
-              <Input
-                name='lastName'
-                value={formData.lastName}
-                onChange={handleInputChange}
-              />
+              <Input name='lastName' />
             </Form.Item>
             <Form.Item name='organization' label='Organization'>
-              <Input
-                name='organization'
-                value={formData.organization}
-                onChange={handleInputChange}
-              />
+              <Input name='organization' />
             </Form.Item>
             <Form.Item name='position' label='Position/Degree Name'>
-              <Input
-                name='position'
-                value={formData.position}
-                onChange={handleInputChange}
-              />
+              <Input name='position' />
             </Form.Item>
             <Form.Item>
               <div className='user-card--button-container'>

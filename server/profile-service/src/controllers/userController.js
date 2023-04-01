@@ -102,8 +102,13 @@ export const validateUserCredentials = async (req, res) => {
   }
 }
 
+/**
+ * Controller for PUT /users/:userId/personal-identity
+ * Returns a user by ID (by default all details except password else the fields requested in the request query)
+ */
 export const updatePersonalIdentity = async (req, res) => {
-  const { userId, firstName, lastName, organization, position } = req.body
+  const userId = req.params.userId
+  const { firstName, lastName, organization, position } = req.body
 
   // Check if request body contains required fields
   if (!userId || !firstName) {
@@ -124,18 +129,18 @@ export const updatePersonalIdentity = async (req, res) => {
       },
       { new: true }
     )
-
+    // if user was not found return 404 error
     if (!updatedUser) {
       return res.status(404).json({
         message: `User with ID ${userId} not found`,
       })
     }
-    // Return the updated user document
+    // Return a success message along with a 200 status code
     return res.status(200).json({
       message: 'Personal identity updated',
-      user: updatedUser,
     })
   } catch (error) {
+    // On error, return a 500 status code with an error message
     console.error(error)
     return res.status(500).json({
       message: 'Error updating personal identity',

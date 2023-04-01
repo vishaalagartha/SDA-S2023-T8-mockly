@@ -1,7 +1,9 @@
 import request from '../utils/request'
 
-export const updatePersonalIdentityAPI = async (payload) =>
-  request('users/personal-identity', {
+// update personal identity (firstName, lastName, position, organization) for a particular user
+// PUT /api/users/:userId/personal-identity
+export const updatePersonalIdentityAPI = async (userId, payload) =>
+  request(`users/${userId}/personal-identity`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   })

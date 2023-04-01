@@ -34,13 +34,13 @@ const ProfilePage = () => {
   return (
     <div className='user-profile'>
       <Row justify='center' gutter={[16, 16]}>
-        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
           <IdentityCard />
           <PersonalInformationCard />
           <SkillsCard />
           <CoursesCard />
         </Col>
-        <Col xs={24} sm={24} md={14} lg={14} xl={14}>
+        <Col xs={24} sm={24} md={16} lg={16} xl={16}>
           <SummaryCard />
           <InterviewerDetailsCard />
           <EducationCard />

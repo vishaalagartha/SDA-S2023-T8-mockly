@@ -29,7 +29,7 @@ const router = Router()
 // Get all users
 router.get('/', getUsers)
 
-// GET /users
+// GET /users/:userId
 // Get user by ID
 router.get('/:userId', getUserById)
 
@@ -41,9 +41,9 @@ router.post('/', createUser)
 // validate andrewId and password for login process
 router.post('/credentials', validateUserCredentials)
 
-// PUT /users/personal-identity
+// PUT /users/:userId/personal-identity
 // Update personal identity fields for a user
-router.put('/personal-identity', updatePersonalIdentity)
+router.put('/:userId/personal-identity', updatePersonalIdentity)
 
 // PUT /users/personal-information/:id
 // Update personal information fields for a user

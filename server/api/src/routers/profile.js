@@ -29,23 +29,27 @@ router.get('/:userId', async (request, response) => {
   }
 })
 
-// PUT /users/personal-identity
+// PUT /users/:userId/personal-identity
 // Update personal identity fields for a user
 router.put(
-  '/personal-identity',
-  setUserIdFromToken,
+  '/:userId/personal-identity',
+  verifyUserIdParam,
   async (request, response) => {
+    const userId = request.params.userId
     const options = {
       method: 'PUT',
       body: JSON.stringify(request.body),
       headers,
     }
     try {
-      const resp = await fetch(`${BASE_URL}/personal-identity`, options)
+      const resp = await fetch(
+        `${BASE_URL}/${userId}/personal-identity`,
+        options
+      )
       const updatedUser = await resp.json()
       response.status(resp.status).json(updatedUser)
     } catch (e) {
-      response.status(500).send('Internal Server Error')
+      response.status(500).json({ message: 'Internal Server Error' })
     }
   }
 )
