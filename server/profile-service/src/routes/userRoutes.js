@@ -1,6 +1,119 @@
 import { Router } from 'express'
+import {
+  getUsers,
+  getUserById,
+  createUser,
+  validateUserCredentials,
+  updatePersonalIdentity,
+  updatePersonalInformation,
+  createEducation,
+  updateEducation,
+  deleteEducation,
+  createSkill,
+  deleteSkill,
+  createCourse,
+  deleteCourse,
+  createProject,
+  updateProject,
+  deleteProject,
+  createExperience,
+  updateExperience,
+  deleteExperience,
+  updateSummary,
+  updateInterviewerDetails,
+} from '../controllers/userController'
 
-export default Router().get('/', async (req, res) => {
+const router = Router()
+
+// GET /users
+// Get all users
+router.get('/', getUsers)
+
+// GET /users/:userId
+// Get user by ID
+router.get('/:userId', getUserById)
+
+// POST /users
+// Create new user
+router.post('/', createUser)
+
+// POST /users/credentials
+// validate andrewId and password for login process
+router.post('/credentials', validateUserCredentials)
+
+// PUT /users/:userId/personal-identity
+// Update personal identity fields for a user
+router.put('/:userId/personal-identity', updatePersonalIdentity)
+
+// PUT /users/:userId/personal-information/:id
+// Update personal information fields for a user
+router.put('/:userId/personal-information', updatePersonalInformation)
+
+// POST /users/education
+// Create a new education entry for a user
+router.post('/education', createEducation)
+
+// PUT /users/education
+// Update an existing education entry for a user
+router.put('/education', updateEducation)
+
+// DELETE /users/education
+// Delete an existing education entry for a user
+router.delete('/education', deleteEducation)
+
+// POST /users/:userId/skills
+// Create a new skill for a user
+router.post('/:userId/skills', createSkill)
+
+// DELETE /users/:userId/skills
+// Delete a skill for a user
+router.delete('/:userId/skills', deleteSkill)
+
+// POST /users/:userId/courses
+// Create a new course entry for a user
+router.post('/:userId/courses', createCourse)
+
+// DELETE /users/:userId/courses
+// Delete an existing course entry for a user
+router.delete('/:userId/courses', deleteCourse)
+
+// POST /users/projects
+// Create a new project entry for a user
+router.post('/projects', createProject)
+
+// PUT /users/projects
+// Update an existing project entry for a user
+router.put('/projects', updateProject)
+
+// DELETE /users/projects
+// Delete an existing project entry for a user
+router.delete('/projects', deleteProject)
+
+// POST /users/experiences
+// Create a new experience entry for a user
+router.post('/experiences', createExperience)
+
+// PUT /users/experiences
+// Update an existing experience entry for a user
+router.put('/experiences', updateExperience)
+
+// DELETE /users/experiences
+// Delete an existing experience entry for a user
+router.delete('/experiences', deleteExperience)
+
+// PUT /users/:userId/summary
+// Update the summary field for a user
+router.put('/:userId/summary', updateSummary)
+
+// PUT /users/:userId/interviewer-details
+// Update the interviewer card for a user
+router.put('/:userId/interviewer-details', updateInterviewerDetails)
+
+// TODO: delete this route
+// GET /users/interviewer
+// Retrieves a list of interviewers and their associated skills
+// Returns an array of objects, each containing the interviewer's name and their skills
+router.get('/interviewer', async (req, res) => {
   const usersData = [
     {
       interviewer: 'peer',
@@ -55,3 +168,5 @@ export default Router().get('/', async (req, res) => {
   ]
   res.json(usersData)
 })
+
+export default router
