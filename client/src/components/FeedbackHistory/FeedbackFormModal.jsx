@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import { Modal, Slider, Input } from 'antd'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-//  import { Row, Col } from 'antd'
-//  import { fetchUserAPI } from '../api/userProfile'
-import { setFeedbackQuestions, feedbackSelector } from '../store/feedbackSlice'
+import {
+  setFeedbackQuestions,
+  feedbackSelector,
+} from '../../store/feedbackSlice'
 // eslint-disable-next-line no-unused-vars
-import FeedbackForm from '../components/FeedbackHistory/FeedbackForm'
-
-const FeedbackPage = () => {
-  const dispatch = useDispatch()
-  // eslint-disable-next-line no-unused-vars
-  const [openFeedbackForm, setOpenFeedbackForm] = useState(true)
-  // eslint-disable-next-line no-unused-vars
-  const [selectedFeedbackForm, setSelectedFeedbackForm] = useState(0)
-  // eslint-disable-next-line no-unused-vars
+const { TextArea } = Input
+// eslint-disable-next-line no-unused-vars
+const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
   const feedback = useSelector(feedbackSelector)
+  const dispatch = useDispatch()
   useEffect(() => {
     const getFeedback = async () => {
       try {
@@ -68,14 +65,43 @@ const FeedbackPage = () => {
     getFeedback()
   }, [dispatch])
   return (
-    <div>
-      <FeedbackForm
-        open={openFeedbackForm}
-        setOpen={setOpenFeedbackForm}
-        selectedFeedbackForm={selectedFeedbackForm}
-      />
-    </div>
+    <Modal open={open} onCancel={() => setOpen(false)} width={1000}>
+      {open &&
+        feedback &&
+        Object.keys(feedback.questions).map((key) => {
+          const currQuestion = feedback.questions[key]
+          console.log(currQuestion)
+          const questionType = currQuestion.type
+          switch (questionType) {
+            case 'text':
+              return (
+                <div key={`question-${key}`}>
+                  <p>{currQuestion.question}</p>
+                  <TextArea rows={4} />
+                </div>
+              )
+              //  eslint-disable-next-line no-unreachable
+              break
+            case '1-5':
+              return (
+                <div key={`question-${key}`}>
+                  <p>{currQuestion.question}</p>
+                  <Slider
+                    step={20}
+                    marks={{ 0: 0, 20: 1, 40: 2, 60: 3, 80: 4, 100: 5 }}
+                    defaultValue={3}
+                  />
+                </div>
+              )
+              //  eslint-disable-next-line no-unreachable
+              break
+            default:
+              //  eslint-disable-next-line no-unreachable
+              break
+          }
+        })}
+    </Modal>
   )
 }
 
-export default FeedbackPage
+export default FeedbackFormModal
