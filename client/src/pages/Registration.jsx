@@ -1,5 +1,5 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Row, Col, Form, Typography, Input, Button } from 'antd'
+import { Row, Form, Col, Typography, Input, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useNavigate } from 'react-router-dom'
 import request from '../utils/request'
@@ -7,12 +7,13 @@ import { setUser } from '../store/userSlice'
 import { useDispatch } from 'react-redux'
 import { useState } from 'react'
 
-const Landing = () => {
+const RegistrationPage = () => {
   const [form] = useForm()
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  // shows loading icon on the button till we get login api response
+  // shows loading icon on the button till we get registration response
   const [loading, setLoading] = useState(false)
 
   // displays error message below the form field
@@ -25,14 +26,23 @@ const Landing = () => {
     ])
   }
 
-  const handleLogin = async () => {
+  // navigates to the login page in login link click
+  const handleLoginLink = () => {
+    navigate('/login')
+  }
+
+  // handles the user's registration
+  const handleRegister = async () => {
     try {
       setLoading(true)
+      // validates the form and retrieve the field values
       const values = await form.validateFields()
-      const res = await request('login', {
+      // send message to the register endpoint
+      const res = await request('register', {
         method: 'POST',
         body: JSON.stringify(values),
       })
+      // on success response, saves the user in redux store and set's the jwt token in local storage
       if (!res.status) {
         const { token, ...fieldsToStore } = res
         dispatch(setUser(fieldsToStore))
@@ -41,8 +51,8 @@ const Landing = () => {
         navigate('/')
       }
     } catch (error) {
-      if (error.status === 404) {
-        setFormFieldError('andrewId', 'Andrew Id does not exists.')
+      if (error.status === 409) {
+        setFormFieldError('andrewId', 'Andrew Id is already taken')
       } else {
         console.log(error)
       }
@@ -50,23 +60,19 @@ const Landing = () => {
     setLoading(false)
   }
 
-  const handleRegisterLink = async () => {
-    navigate('/registration')
-  }
-
-  const handleEnter = (e) => e.keyCode === 13 && handleLogin(e)
+  const handleEnter = (e) => e.keyCode === 13 && handleRegister(e)
 
   return (
     <div>
       <Row>
         <Col xs={0} sm={0} md={10} lg={10} xl={10}>
-          <div style={{ background: 'lightblue', height: '100vh' }}></div>
+          <div style={{ background: 'blue', height: '100vh' }}></div>
         </Col>
         <Col xs={24} sm={24} md={14} lg={14} xl={14}>
           <Row justify='center' align='middle' style={{ minHeight: '100vh' }}>
             <div>
-              <Typography.Title level={1}>Log In to Mockly.</Typography.Title>
-              <Form form={form} onKeyUp={handleEnter} onFinish={handleLogin}>
+              <Typography.Title level={1}>Sign Up to Mockly.</Typography.Title>
+              <Form form={form} onKeyUp={handleEnter} onFinish={handleRegister}>
                 <Form.Item
                   name='andrewId'
                   rules={[
@@ -98,17 +104,17 @@ const Landing = () => {
                     style={{ width: '100%', height: '46px' }}
                     loading={loading}
                   >
-                    Log In
+                    Sign Up
                   </Button>
                 </Form.Item>
               </Form>
               <Typography.Text>
-                Have no account yet?{' '}
+                Already signed up?{' '}
                 <Typography.Link
-                  onClick={handleRegisterLink}
+                  onClick={handleLoginLink}
                   style={{ color: '#1890ff' }}
                 >
-                  Sign Up
+                  Log In
                 </Typography.Link>
               </Typography.Text>
             </div>
@@ -119,4 +125,4 @@ const Landing = () => {
   )
 }
 
-export default Landing
+export default RegistrationPage
