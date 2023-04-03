@@ -47,7 +47,7 @@ const RegistrationPage = () => {
         const { token, ...fieldsToStore } = res
         dispatch(setUser(fieldsToStore))
         localStorage.setItem('token', token)
-        localStorage.setItem('id', fieldsToStore._id)
+        localStorage.setItem('id', fieldsToStore.userId)
         navigate('/')
       }
     } catch (error) {

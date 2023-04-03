@@ -90,7 +90,8 @@ export const validateUserCredentials = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-    if (!user.comparePassword(password)) {
+    const isPasswordVerified = await user.comparePassword(password)
+    if (!isPasswordVerified) {
       return res.status(401).json({ message: 'Invalid credentials' })
     }
     // eslint-disable-next-line
