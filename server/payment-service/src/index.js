@@ -1,4 +1,5 @@
 import express from 'express'
+import paymentRoutes from './routes/paymentRoutes'
 
 const PORT = parseInt(process.env.PORT || '3004')
 
@@ -7,14 +8,8 @@ const app = express()
 app.get('/api/', (req, res) => {
   res.json({ message: 'Hello from Payment' })
 })
+app.use('/payment', paymentRoutes)
 
-app.post('/payment', (req, res) => {
-  const { payer, payee, amount, time } = req.body
-})
-
-app.post('/payment-method', (req, res) => {
-  // TODO: save payment method
-})
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)

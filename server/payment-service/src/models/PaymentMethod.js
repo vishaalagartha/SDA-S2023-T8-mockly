@@ -2,12 +2,19 @@
 import mongoose, { Schema } from 'mongoose'
 
 const PaymentMethodSchema = new Schema({
-  // uuid of person
+  // id of person
   person: {
     required: true,
     type: String
   },
-  // TODO: payment methods
+  // type of payment method
+  type: {
+    type: String
+  },
+  // account details
+  account: {
+    type: String
+  }
 })
 
 export default mongoose.model('PaymentMethods', PaymentMethodSchema)
