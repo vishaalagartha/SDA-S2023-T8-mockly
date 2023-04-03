@@ -23,6 +23,10 @@ const DashboardPage = () => {
   const [openFeedbackForm, setOpenFeedbackForm] = useState(false)
   // eslint-disable-next-line no-unused-vars
   const [selectedFeedbackForm, setSelectedFeedbackForm] = useState(0)
+  // eslint-disable-next-line no-unused-vars
+  const [currInterviewer, setCurrInterviewer] = useState('')
+  // eslint-disable-next-line no-unused-vars
+  const [currTime, setCurrTime] = useState('')
   //
 
   const upcomingInterviews = interviews.filter((interview) =>
@@ -50,6 +54,8 @@ const DashboardPage = () => {
           <InterviewCard
             {...interview}
             setSelectedFeedbackForm={setSelectedFeedbackForm}
+            setCurrTime={setCurrTime}
+            setCurrInterviewer={setCurrInterviewer}
             key={i}
           />
         ))}
@@ -64,6 +70,8 @@ const DashboardPage = () => {
             {...interview}
             setSelectedFeedbackForm={setSelectedFeedbackForm}
             setOpenFeedbackForm={setOpenFeedbackForm}
+            setCurrTime={setCurrTime}
+            setCurrInterviewer={setCurrInterviewer}
             key={i}
           />
         ))}
@@ -81,6 +89,8 @@ const DashboardPage = () => {
         open={openFeedbackForm}
         setOpen={setOpenFeedbackForm}
         selectedFeedback={selectedFeedbackForm}
+        time={currTime}
+        interviewer={currInterviewer}
       />
       {/*REMOVE THIS AS THIS IS TESTING CODE*/}
       <Button

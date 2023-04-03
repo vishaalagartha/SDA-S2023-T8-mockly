@@ -3,10 +3,17 @@ import { fieldMapping } from '../utils/constants'
 import dayjs from 'dayjs'
 
 const InterviewCard = (interview) => {
-  const { time, interviewer, preferences } = interview
+  const {
+    time,
+    interviewer,
+    preferences,
+    setSelectedFeedbackForm,
+    setOpenFeedbackForm,
+    setCurrTime,
+    setCurrInterviewer,
+  } = interview
   const { andrewId } = interviewer
-  const { setSelectedFeedbackForm } = setSelectedFeedbackForm
-  const { setOpenFeedbackForm } = setOpenFeedbackForm
+
   const { field, interviewer: interviewerType, difficulty } = preferences
   const isUpcoming = dayjs().isBefore(dayjs(time))
   const formattedTime = dayjs(time).format('MM/DD/YY h A')
@@ -36,6 +43,8 @@ const InterviewCard = (interview) => {
                 //  this should be an ID instead
                 setSelectedFeedbackForm(andrewId + time)
                 setOpenFeedbackForm(true)
+                setCurrInterviewer(andrewId)
+                setCurrTime(time)
               }}
             >
               Complete Feedback

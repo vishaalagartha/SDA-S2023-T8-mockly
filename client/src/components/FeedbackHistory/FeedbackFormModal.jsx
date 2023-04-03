@@ -1,4 +1,4 @@
-import { Modal, Slider, Input } from 'antd'
+import { Modal, Slider, Input, Form, Button } from 'antd'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -11,6 +11,45 @@ const { TextArea } = Input
 const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
   const feedback = useSelector(feedbackSelector)
   const dispatch = useDispatch()
+  //
+  // eslint-disable-next-line no-unused-vars
+  /*
+  const handleConfirm = async (idx) => {
+    try {
+      const {
+        interviewer: interviewerType,
+        field,
+        difficulty,
+      } = form.getFieldsValue()
+      const match = {
+        ...matches[idx],
+        interviewerType,
+        field,
+        difficulty,
+        interviewee: user._id,
+      }
+      const res = await createInterview(match)
+      messageApi.open({
+        type: 'success',
+        content: 'Successfully booked your interview!',
+      })
+      dispatch(addInterview(res))
+      setOpen(false)
+    } catch (e) {
+      messageApi.open({ type: 'error', content: 'Failed to request matches.' })
+    }
+  }
+  */
+
+  const onFinish = (values) => {
+    console.log('Success:', values)
+  }
+
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo)
+  }
+
+  //
   useEffect(() => {
     const getFeedback = async () => {
       try {
@@ -65,41 +104,76 @@ const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
     getFeedback()
   }, [dispatch])
   return (
-    <Modal open={open} onCancel={() => setOpen(false)} width={1000}>
-      {open &&
-        feedback &&
-        Object.keys(feedback.questions).map((key) => {
-          const currQuestion = feedback.questions[key]
-          console.log(currQuestion)
-          const questionType = currQuestion.type
-          switch (questionType) {
-            case 'text':
-              return (
-                <div key={`question-${key}`}>
-                  <p>{currQuestion.question}</p>
-                  <TextArea rows={4} />
-                </div>
-              )
-              //  eslint-disable-next-line no-unreachable
-              break
-            case '1-5':
-              return (
-                <div key={`question-${key}`}>
-                  <p>{currQuestion.question}</p>
-                  <Slider
-                    step={20}
-                    marks={{ 0: 0, 20: 1, 40: 2, 60: 3, 80: 4, 100: 5 }}
-                    defaultValue={3}
-                  />
-                </div>
-              )
-              //  eslint-disable-next-line no-unreachable
-              break
-            default:
-              //  eslint-disable-next-line no-unreachable
-              break
-          }
-        })}
+    <Modal
+      open={open}
+      onCancel={() => setOpen(false)}
+      width={1000}
+      footer={null}
+    >
+      <Form
+        name='feedbackForm'
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete='off'
+        layout='vertical'
+      >
+        {open &&
+          feedback &&
+          Object.keys(feedback.questions).map((key) => {
+            const currQuestion = feedback.questions[key]
+            console.log(currQuestion)
+            const questionType = currQuestion.type
+            switch (questionType) {
+              case 'text':
+                return (
+                  <Form.Item
+                    label={currQuestion.question}
+                    name={`question-${key}`}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    key={`question-${key}-item`}
+                  >
+                    <TextArea rows={4} />
+                  </Form.Item>
+                )
+                //  eslint-disable-next-line no-unreachable
+                break
+              case '1-5':
+                return (
+                  <Form.Item
+                    label={currQuestion.question}
+                    name={`question-${key}`}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    key={`question-${key}-item`}
+                  >
+                    <Slider
+                      step={20}
+                      marks={{ 0: 0, 20: 1, 40: 2, 60: 3, 80: 4, 100: 5 }}
+                      defaultValue={3}
+                    />
+                  </Form.Item>
+                )
+                //  eslint-disable-next-line no-unreachable
+                break
+              default:
+                //  eslint-disable-next-line no-unreachable
+                break
+            }
+          })}
+
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type='primary' htmlType='submit'>
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </Modal>
   )
 }
