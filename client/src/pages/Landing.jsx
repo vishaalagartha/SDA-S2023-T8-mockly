@@ -6,6 +6,7 @@ import request from '../utils/request'
 import { setUser } from '../store/userSlice'
 import { useDispatch } from 'react-redux'
 import { useState } from 'react'
+import Features from '../components/Features'
 
 const Landing = () => {
   const [form] = useForm()
@@ -65,7 +66,11 @@ const Landing = () => {
     <div>
       <Row>
         <Col xs={0} sm={0} md={10} lg={10} xl={10}>
-          <div style={{ background: 'lightblue', height: '100vh' }}></div>
+          <div style={{ background: '#35185A', height: '100vh' }}>
+            <Row justify='center' align='middle' style={{ minHeight: '100vh' }}>
+              <Features />
+            </Row>
+          </div>
         </Col>
         <Col xs={24} sm={24} md={14} lg={14} xl={14}>
           <Row justify='center' align='middle' style={{ minHeight: '100vh' }}>
