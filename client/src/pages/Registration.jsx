@@ -1,5 +1,5 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Row, Form, Col, Typography, Input, Button } from 'antd'
+import { Row, Form, Col, Typography, Input, Button, Alert } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useNavigate } from 'react-router-dom'
 import request from '../utils/request'
@@ -15,6 +15,8 @@ const RegistrationPage = () => {
 
   // shows loading icon on the button till we get registration response
   const [loading, setLoading] = useState(false)
+  // to display error for the entire form as an alert
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // displays error message below the form field
   const setFormFieldError = (fieldName, errorMessage) => {
@@ -54,6 +56,7 @@ const RegistrationPage = () => {
       if (error.status === 409) {
         setFormFieldError('andrewId', 'Andrew Id is already taken')
       } else {
+        setErrorMessage('Unexpected error occurred. Please try again')
         console.log(error)
       }
     }
@@ -72,6 +75,15 @@ const RegistrationPage = () => {
           <Row justify='center' align='middle' style={{ minHeight: '100vh' }}>
             <div>
               <Typography.Title level={1}>Sign Up to Mockly.</Typography.Title>
+              {errorMessage && (
+                <Alert
+                  message={errorMessage}
+                  type='error'
+                  style={{ marginBottom: '16px' }}
+                  closable
+                  onClose={() => {}}
+                />
+              )}
               <Form form={form} onKeyUp={handleEnter} onFinish={handleRegister}>
                 <Form.Item
                   name='andrewId'

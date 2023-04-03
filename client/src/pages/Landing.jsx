@@ -1,5 +1,5 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Row, Col, Form, Typography, Input, Button } from 'antd'
+import { Row, Col, Form, Typography, Input, Button, Alert } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useNavigate } from 'react-router-dom'
 import request from '../utils/request'
@@ -14,6 +14,8 @@ const Landing = () => {
 
   // shows loading icon on the button till we get login api response
   const [loading, setLoading] = useState(false)
+  // to display error for the entire form as an alert
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // displays error message below the form field
   const setFormFieldError = (fieldName, errorMessage) => {
@@ -43,7 +45,10 @@ const Landing = () => {
     } catch (error) {
       if (error.status === 404) {
         setFormFieldError('andrewId', 'Andrew Id does not exists.')
+      } else if (error.status === 401) {
+        setFormFieldError('password', 'Password does not match.')
       } else {
+        setErrorMessage('Unexpected error occurred. Please try again.')
         console.log(error)
       }
     }
@@ -66,6 +71,15 @@ const Landing = () => {
           <Row justify='center' align='middle' style={{ minHeight: '100vh' }}>
             <div>
               <Typography.Title level={1}>Log In to Mockly.</Typography.Title>
+              {errorMessage && (
+                <Alert
+                  message={errorMessage}
+                  type='error'
+                  style={{ marginBottom: '16px' }}
+                  closable
+                  onClose={() => {}}
+                />
+              )}
               <Form form={form} onKeyUp={handleEnter} onFinish={handleLogin}>
                 <Form.Item
                   name='andrewId'
