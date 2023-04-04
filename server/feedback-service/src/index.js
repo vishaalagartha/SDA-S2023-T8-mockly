@@ -3,6 +3,7 @@ import Feedback from './feedback/Feedback'
 import LanguageDecorator from "./feedback/LanguageDecorator";
 import TechnicalDecorator from "./feedback/TechnicalDecorator";
 import ProfessionalismDecorator from './feedback/ProfessionalismDecorator';
+import FeedbackController from './controllers/FeedbackController'
 //  import * as Database from './utils/Database'
 
 const PORT = parseInt(process.env.PORT || '3002')
@@ -15,10 +16,30 @@ app.get('/api/', (req, res) => {
 })
 
 app.get('/feedback', async (request, response) => {
+  console.log("IN FEEDBACK SERVICE SOURCE")
   const { userId } = request.query
   try {
     const receivedFeedback = await MatchController.getByUserId(userId)
     response.json(receivedFeedback)
+  } catch (e) {
+    console.error(e)
+    response.status(500).send({ message: 'Internal server error.'})
+  }
+})
+
+app.post('/feedback', async (request, response) => {
+  console.log("in feedback api")
+  const { answers , reviewer, time, reviewee} = request.body
+
+  try {
+    console.log(answers , reviewer, time, reviewee)
+    const feedback= await FeedbackController.create(reviewer, reviewee, time, answers)
+    const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/users/${interview.interviewer}`, { method: 'GET' })
+    const interviewerDetails = await res.json()
+    console.log('interview', interview.toObject())
+    console.log('details', interviewerDetails)
+    const data = { ...interview.toObject(), interviewer: interviewerDetails }
+    response.json(data)
   } catch (e) {
     console.error(e)
     response.status(500).send({ message: 'Internal server error.'})

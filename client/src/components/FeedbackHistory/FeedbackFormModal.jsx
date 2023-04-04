@@ -5,12 +5,23 @@ import {
   setFeedbackQuestions,
   feedbackSelector,
 } from '../../store/feedbackSlice'
+import { createFeedback } from '../../api/feedback'
+import { userSelector } from '../../store/userSlice'
 // eslint-disable-next-line no-unused-vars
 const { TextArea } = Input
 // eslint-disable-next-line no-unused-vars
-const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
+const FeedbackFormModal = ({
+  open,
+  setOpen,
+  // eslint-disable-next-line no-unused-vars
+  selectedFeedbackForm,
+  time,
+  interviewer,
+}) => {
   const feedback = useSelector(feedbackSelector)
   const dispatch = useDispatch()
+  // eslint-disable-next-line no-unused-vars
+  const user = useSelector(userSelector)
   //
   // eslint-disable-next-line no-unused-vars
   /*
@@ -41,8 +52,21 @@ const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
   }
   */
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log('Success:', values)
+    //  save to MongoDB
+    try {
+      //const questions = { questions: values }
+      console.log('in onFinish')
+      await createFeedback({
+        answers: values,
+        reviewer: user._id,
+        time,
+        reviewee: interviewer,
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const onFinishFailed = (errorInfo) => {
@@ -128,7 +152,7 @@ const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
                 return (
                   <Form.Item
                     label={currQuestion.question}
-                    name={`question-${key}`}
+                    name={`${key}`}
                     rules={[
                       {
                         required: true,
@@ -145,7 +169,7 @@ const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
                 return (
                   <Form.Item
                     label={currQuestion.question}
-                    name={`question-${key}`}
+                    name={`${key}`}
                     rules={[
                       {
                         required: true,
@@ -156,7 +180,7 @@ const FeedbackFormModal = ({ open, setOpen, selectedFeedbackForm }) => {
                     <Slider
                       step={20}
                       marks={{ 0: 0, 20: 1, 40: 2, 60: 3, 80: 4, 100: 5 }}
-                      defaultValue={3}
+                      initialValues={60}
                     />
                   </Form.Item>
                 )

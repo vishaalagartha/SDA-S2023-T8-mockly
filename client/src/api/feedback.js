@@ -95,11 +95,15 @@ const findMatches = async (interviewData) => request('matching/matches', {
     method: 'POST',
     body: JSON.stringify(interviewData)
   })
-
-const createInterview = async (interviewData) => request('matching/interviews', {
-    method: 'POST',
-    body: JSON.stringify(interviewData)
-  })
 */
 
-export { fetchFeedback }
+const createFeedback = async (feedbackData) => {
+  console.log('in CF', feedbackData)
+  console.log(JSON.stringify(feedbackData))
+  request('feedback/addFeedback', {
+    method: 'POST',
+    body: JSON.stringify(feedbackData),
+  })
+}
+
+export { fetchFeedback, createFeedback }

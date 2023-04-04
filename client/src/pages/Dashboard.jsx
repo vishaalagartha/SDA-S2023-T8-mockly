@@ -88,7 +88,7 @@ const DashboardPage = () => {
       <FeedbackFormModal
         open={openFeedbackForm}
         setOpen={setOpenFeedbackForm}
-        selectedFeedback={selectedFeedbackForm}
+        selectedFeedbackForm={selectedFeedbackForm}
         time={currTime}
         interviewer={currInterviewer}
       />
