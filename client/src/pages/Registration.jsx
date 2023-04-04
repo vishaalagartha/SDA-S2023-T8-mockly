@@ -1,4 +1,9 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import {
+  LockOutlined,
+  UserOutlined,
+  IdcardOutlined,
+  MailOutlined,
+} from '@ant-design/icons'
 import { Row, Form, Col, Typography, Input, Button, Alert } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useNavigate } from 'react-router-dom'
@@ -40,6 +45,7 @@ const RegistrationPage = () => {
       setLoading(true)
       // validates the form and retrieve the field values
       const values = await form.validateFields()
+      console.log(values)
       // send message to the register endpoint
       const res = await request('register', {
         method: 'POST',
@@ -77,7 +83,11 @@ const RegistrationPage = () => {
           </div>
         </Col>
         <Col xs={24} sm={24} md={14} lg={14} xl={14}>
-          <Row justify='center' align='middle' style={{ minHeight: '100vh' }}>
+          <Row
+            justify='center'
+            align='middle'
+            style={{ minHeight: '100vh', padding: '0 12px' }}
+          >
             <div>
               <Typography.Title level={1}>Sign Up to Mockly.</Typography.Title>
               {errorMessage && (
@@ -111,6 +121,61 @@ const RegistrationPage = () => {
                   <Input.Password
                     prefix={<LockOutlined />}
                     placeholder='Password'
+                    style={{ width: '100%', height: '46px' }}
+                  />
+                </Form.Item>
+                <Row gutter={16}>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      name='firstName'
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please input a First Name!',
+                        },
+                      ]}
+                    >
+                      <Input
+                        prefix={<IdcardOutlined />}
+                        placeholder='First Name'
+                        style={{ width: '100%', height: '46px' }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item
+                      name='lastName'
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please input a Last Name!',
+                        },
+                      ]}
+                    >
+                      <Input
+                        prefix={<IdcardOutlined />}
+                        placeholder='Last Name'
+                        style={{ width: '100%', height: '46px' }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Form.Item
+                  name='email'
+                  rules={[
+                    {
+                      type: 'email',
+                      message: 'Please enter a valid email address',
+                    },
+                    {
+                      required: true,
+                      message: 'Email is required',
+                    },
+                  ]}
+                >
+                  <Input
+                    prefix={<MailOutlined />}
+                    placeholder='Email'
                     style={{ width: '100%', height: '46px' }}
                   />
                 </Form.Item>
