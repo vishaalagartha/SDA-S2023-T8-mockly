@@ -17,6 +17,11 @@ const InterviewCard = (interview) => {
   const { field, interviewer: interviewerType, difficulty } = preferences
   const isUpcoming = dayjs().isBefore(dayjs(time))
   const formattedTime = dayjs(time).format('MM/DD/YY h A')
+
+  const handleLaunch = () => {
+    console.log('launch meeting')
+  }
+
   return (
     <Card className='w-10 m-3'>
       <Space direction='vertical' className='text-center'>
@@ -32,10 +37,14 @@ const InterviewCard = (interview) => {
         <p>Level: {difficulty}</p>
         <Divider />
         {isUpcoming ? (
-          <Button danger>Delete</Button>
+          <>
+            <Button type='primary' onClick={handleLaunch}>
+              Launch Meeting
+            </Button>
+            <Button danger>Delete</Button>
+          </>
         ) : (
           <>
-            <Button type='primary'>Launch Meeting</Button>
             <Button
               type='default'
               onClick={(e) => {
