@@ -19,7 +19,7 @@ export default Router()
   .post('/addFeedback', async (request, response) => {
     const { body } = request
     const options = { method: 'POST', body: JSON.stringify(body), headers }
-    console.log("in feedback api from server")
+    console.log("in feedback api from server", options.body)
     try {
       console.log("IN HERE")
       const resp = await fetch('http://mockly-feedback-service:3002/feedback', options)
