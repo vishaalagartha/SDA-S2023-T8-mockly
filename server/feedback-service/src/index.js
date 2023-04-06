@@ -22,17 +22,6 @@ app.get('/api/', (req, res) => {
   res.json({ message: 'Hello from Feedback' })
 })
 
-app.get('/feedback', async (request, response) => {
-  console.log("IN FEEDBACK GET")
-  const { userId } = request.query
-  try {
-    const receivedFeedback = await MatchController.getByUserId(userId)
-    response.json(receivedFeedback)
-  } catch (e) {
-    console.error(e)
-    response.status(500).send({ message: 'Internal server error.'})
-  }
-})
 
 app.get('/feedbackAll', async (request, response) => {
   console.log("IN FEEDBACK GET ALL")
@@ -50,7 +39,8 @@ app.get('/feedback', async (request, response) => {
   console.log("IN FEEDBACK GET SPECIFC")
   const { revieweeName } = request.query
   try {
-    const receivedFeedback = await FeedbackController.getAll(revieweeName )
+    console.log("this is the reviewee name: ", revieweeName)
+    const receivedFeedback = await FeedbackController.getFeedback(revieweeName )
     response.json(receivedFeedback)
   } catch (e) {
     console.error(e)
@@ -61,11 +51,11 @@ app.get('/feedback', async (request, response) => {
 app.post('/feedback', async (request, response) => {
   console.log("in feedback api")
   console.log("REQUEST BODY located: ", request.body["answers"])
-  const { answers , reviewer, time, reviewee} = request.body
+  const { answers , reviewer, time, reviewee, questions} = request.body
 
   try {
     console.log(answers , reviewer, time, reviewee)
-    const feedback= await FeedbackController.create(reviewer, reviewee, time, answers)
+    const feedback= await FeedbackController.create(reviewer, reviewee, time, questions, answers)
     /*
     const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/users/${interview.interviewer}`, { method: 'GET' })
     const interviewerDetails = await res.json()

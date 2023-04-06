@@ -12,7 +12,7 @@ const InterviewCard = (interview) => {
     setCurrTime,
     setCurrInterviewer,
   } = interview
-  const { andrewId } = interviewer
+  const { andrewId, firstName, lastName } = interviewer
 
   const { field, interviewer: interviewerType, difficulty } = preferences
   const isUpcoming = dayjs().isBefore(dayjs(time))
@@ -50,9 +50,9 @@ const InterviewCard = (interview) => {
               onClick={(e) => {
                 e.stopPropagation()
                 //  this should be an ID instead
-                setSelectedFeedbackForm(andrewId + time)
+                setSelectedFeedbackForm(`${firstName} ${lastName}` + time)
                 setOpenFeedbackForm(true)
-                setCurrInterviewer(andrewId)
+                setCurrInterviewer(`${firstName} ${lastName}`)
                 setCurrTime(time)
               }}
             >

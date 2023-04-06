@@ -6,12 +6,14 @@ import { headers } from '../utils/constants'
 export default Router()
   .get('/feedback', async (request, response) => {
     const options = { method: 'GET', headers }
-    const { userId } = request.query
+    const { revieweeName } = request.query
+    console.log("this is the revieweeNameD", revieweeName)
     try {
-      const resp = await fetch(`http://mockly-feedback-service:3002/feedback?userId=${userId}`, options)
+      const resp = await fetch(`http://mockly-feedback-service:3002/feedback?revieweeName=${revieweeName}`, options)
       const receivedFeedback = await resp.json()
       response.json(receivedFeedback)
     } catch (e) {
+      console.log("in router feedback get")
       response.status(500).send({ message: 'Internal server error '})
     }
   })

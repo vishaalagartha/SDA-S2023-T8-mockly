@@ -59,8 +59,9 @@ const FeedbackFormModal = ({
       //const questions = { questions: values }
       console.log('in onFinish', interviewer)
       await createFeedback({
+        questions: feedback.questions,
         answers: values,
-        reviewer: user._id,
+        reviewer: `${user.firstName} ${user.lastName}`,
         time,
         reviewee: interviewer,
       })
