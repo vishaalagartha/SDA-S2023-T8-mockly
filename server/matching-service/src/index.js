@@ -10,7 +10,7 @@ const PORT = parseInt(process.env.PORT || '3003')
 
 const app = express().use(
   cors({
-    origin: 'http://localhost:3001',
+    origin: ['http://localhost:3001', 'http://localhost:3004']
   })
 ).use(express.json())
 
@@ -45,7 +45,6 @@ app.post('/interviews', async (request, response) => {
   const preference = new PreferenceBuilder().field(field).difficulty(difficulty).interviewer(interviewerType).make()
   const preferenceObj = preference.toObject()
   try {
-    console.log(interviewee, interviewer, preferenceObj, time)
     const interview = await MatchController.create(interviewee, interviewer, preferenceObj, time)
     const res = await fetch(`http://mockly-profile-service:${PORTS.PROFILE}/users/${interview.interviewer}`, { method: 'GET' })
     const interviewerDetails = await res.json()
@@ -59,10 +58,30 @@ app.post('/interviews', async (request, response) => {
   }
 })
 
-app.delete('/interviews/:interview_id', (req, res) => {
-  res.json({ message: 'DELETE interviews response' })
+app.patch('/interviews/:interviewId', async (request, response) => {
+  const { interviewId } = request.params
+  const interview = request.body
+  try {
+    const modifiedInterview = await MatchController.modifyInterview(interviewId, interview)
+    response.status(200).json(modifiedInterview)
+  } catch (e) {
+    console.error(e)
+    response.status(500).send({ message: 'Internal server error.'})
+  }
+})
+
+app.delete('/interviews/:interviewId', async (request, response) => {
+  const { interviewId } = request.params
+  try {
+    await MatchController.deleteInterview(interviewId)
+    response.status(204).send({ message: 'Successfully deleted interview.' })
+  } catch (e) {
+    console.error(e)
+    response.status(500).send({ message: 'Internal server error.'})
+  }
 })
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
 })
+

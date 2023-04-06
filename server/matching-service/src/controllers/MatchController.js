@@ -50,6 +50,29 @@ class MatchController {
       }))
     return matches
   }
+
+  /*
+  * Modify interview by id
+  */ 
+  async modifyInterview(interviewId, newInterview) {
+    const interview = await Match.findByIdAndUpdate(interviewId, newInterview, { new: true })
+    if (interview) {
+      return interview
+    } else {
+      throw new Error('Failed to update interview.')
+    }
+  }
+
+  /*
+  * Delete interview by id
+  */ 
+    async deleteInterview(interviewId) {
+      try {
+        await Match.deleteById(interviewId)
+      } catch (e) {
+        throw new Error('Failed to delete interview.')
+      }
+    }
 }
 
 export default new MatchController
